@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TSUN Smart (unofficial)",
+        "description": "Sign in with the e-mail and password of your TSUN Smart app account. Unofficial integration, not affiliated with TSUN. Only a SHA-256 hash of the password is stored.",
+        "data": {
+          "username": "E-mail",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "The TSUN cloud rejected the stored login for {username}. Enter the current password.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Login rejected. Check e-mail and password (use the TSUN Smart app account, not the installer portal).",
+      "cannot_connect": "Cannot reach the TSUN cloud."
+    },
+    "abort": {
+      "already_configured": "This account is already configured.",
+      "reauth_successful": "Login updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling",
+        "description": "The cloud only receives new values about every 5 minutes. Please do not poll more often than necessary.",
+        "data": {
+          "scan_interval": "Update interval (minutes)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "soc": {
+        "name": "Battery SoC"
+      },
+      "battery_power": {
+        "name": "Battery power (+charge / -discharge)"
+      },
+      "remaining_energy": {
+        "name": "Remaining energy"
+      },
+      "pv_power": {
+        "name": "PV power"
+      },
+      "pv_today": {
+        "name": "PV energy today"
+      },
+      "charge_today": {
+        "name": "Charged today"
+      },
+      "discharge_today": {
+        "name": "Discharged today"
+      },
+      "battery_status": {
+        "name": "Battery status"
+      },
+      "network_status": {
+        "name": "Cloud status"
+      },
+      "last_update": {
+        "name": "Last cloud update"
+      }
+    },
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      }
+    },
+    "button": {
+      "device_report": {
+        "name": "Prepare device report"
+      }
+    }
+  }
+}

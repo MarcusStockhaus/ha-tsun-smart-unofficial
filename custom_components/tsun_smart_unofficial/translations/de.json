@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "TSUN Smart (inoffiziell)",
+        "description": "Melde dich mit E-Mail und Passwort deines TSUN-Smart-App-Kontos an. Inoffizielle Integration, nicht mit TSUN verbunden. Vom Passwort wird nur ein SHA-256-Hash gespeichert.",
+        "data": {
+          "username": "E-Mail",
+          "password": "Passwort"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Erneut anmelden",
+        "description": "Die TSUN-Cloud hat die gespeicherte Anmeldung für {username} abgelehnt. Gib das aktuelle Passwort ein.",
+        "data": {
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Anmeldung abgelehnt. E-Mail und Passwort prüfen (Konto der TSUN-Smart-App verwenden, nicht das Installateur-Portal).",
+      "cannot_connect": "Die TSUN-Cloud ist nicht erreichbar."
+    },
+    "abort": {
+      "already_configured": "Dieses Konto ist bereits eingerichtet.",
+      "reauth_successful": "Anmeldung aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Abfrage",
+        "description": "Die Cloud bekommt nur etwa alle 5 Minuten neue Werte. Bitte nicht häufiger abfragen als nötig.",
+        "data": {
+          "scan_interval": "Aktualisierungsintervall (Minuten)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "soc": {
+        "name": "Akku-SoC"
+      },
+      "battery_power": {
+        "name": "Akkuleistung (+Laden / -Entladen)"
+      },
+      "remaining_energy": {
+        "name": "Verbleibende Energie"
+      },
+      "pv_power": {
+        "name": "PV-Leistung"
+      },
+      "pv_today": {
+        "name": "PV-Energie heute"
+      },
+      "charge_today": {
+        "name": "Geladen heute"
+      },
+      "discharge_today": {
+        "name": "Entladen heute"
+      },
+      "battery_status": {
+        "name": "Akku-Status"
+      },
+      "network_status": {
+        "name": "Cloud-Status"
+      },
+      "last_update": {
+        "name": "Letzte Cloud-Aktualisierung"
+      }
+    },
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      }
+    },
+    "button": {
+      "device_report": {
+        "name": "Geräte-Bericht vorbereiten"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "domain": "tsun_smart_unofficial",
+  "name": "TSUN Smart (unofficial)",
+  "codeowners": ["@MarcusStockhaus"],
+  "config_flow": true,
+  "documentation": "https://github.com/MarcusStockhaus/ha-tsun-smart-unofficial",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/MarcusStockhaus/ha-tsun-smart-unofficial/issues",
+  "requirements": [],
+  "version": "0.2.0"
+}

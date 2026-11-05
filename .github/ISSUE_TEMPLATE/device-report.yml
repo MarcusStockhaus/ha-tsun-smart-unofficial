@@ -1,0 +1,35 @@
+name: Device report / Geräte-Bericht
+description: Report how another TSUN device behaves / Bericht zu einem weiteren TSUN-Gerät
+labels: [device-report]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        EN: Unofficial integration, tested on DCU2000Lite only. DE: Inoffizielle Integration, nur am DCU2000Lite getestet.
+        **Never post tokens, serial numbers or addresses. / Poste keine Tokens, Seriennummern oder Adressen.**
+  - type: input
+    id: device
+    attributes:
+      label: Device / Gerät
+      placeholder: "e.g. TSUN TSOL-MS800 + hybrid storage"
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result / Ergebnis
+      options:
+        - Works / Funktioniert
+        - Partly / Teilweise
+        - Does not work / Funktioniert nicht
+    validations:
+      required: true
+  - type: textarea
+    id: missing
+    attributes:
+      label: What does the app show that Home Assistant does not? / Was zeigt die App, Home Assistant aber nicht?
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics / Diagnose
+      description: "Prefilled by the 'Prepare device report' button (structure only). Optionally attach the diagnostics file after checking it for personal data. / Vom Knopf 'Geräte-Bericht vorbereiten' vorausgefüllt (nur Struktur). Optional Diagnose-Datei anhängen, vorher auf persönliche Daten prüfen."

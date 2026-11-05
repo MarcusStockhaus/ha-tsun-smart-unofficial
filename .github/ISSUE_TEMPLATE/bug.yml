@@ -1,0 +1,20 @@
+name: Bug / Fehler
+description: Something does not work / Etwas funktioniert nicht
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? / Was ist passiert?
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions / Versionen
+      placeholder: "Home Assistant 2026.x, integration 0.2.0"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log (no secrets) / Protokoll (ohne Geheimnisse)
+      render: text
