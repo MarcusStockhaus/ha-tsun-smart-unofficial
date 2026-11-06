@@ -1,6 +1,6 @@
 # Changelog / Änderungsprotokoll
 
-## 0.2.1 – unreleased / unveröffentlicht
+## 0.2.1 – 2026-11-06
 - EN: New sensors *PV energy total*, *Charged total*, *Discharged total* (lifetime counters from the cloud, `total_increasing`; suited for the Energy dashboard).
 - DE: Neue Sensoren *PV-Energie gesamt*, *Geladen gesamt*, *Entladen gesamt* (Lebenszeitzähler aus der Cloud, `total_increasing`; geeignet für das Energie-Dashboard).
 - EN: Fix: a wrong password is answered by the cloud with HTTP 412 (`AUTH_INVALID_USERNAME_OR_PASSWORD`); this now correctly triggers the re-authentication dialog instead of endless "unavailable". Verified: refresh tokens work.
