@@ -9,7 +9,7 @@ from typing import Any
 import aiohttp
 
 from .const import BASE_URL, CLIENT_ID, REQUEST_TIMEOUT, USER_AGENT
-from .model import hash_password  # noqa: F401  (re-exported)
+from .model import hash_password, is_auth_failure  # noqa: F401  (hash_password re-exported)
 
 
 class TsunAuthError(Exception):
@@ -45,7 +45,7 @@ class TsunSmartApi:
             raise TsunApiError(f"Cannot reach the TSUN cloud: {err}") from err
 
         if not isinstance(body, dict) or "access_token" not in body:
-            if status in (400, 401, 403):
+            if is_auth_failure(status, body):
                 raise TsunAuthError(str(body))
             raise TsunApiError(f"Unexpected login response (HTTP {status})")
         self._access = body["access_token"]

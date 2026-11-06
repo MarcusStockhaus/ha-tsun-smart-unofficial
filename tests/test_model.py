@@ -97,3 +97,10 @@ def test_mailto_link_bounded_and_value_free():
     assert url.startswith("mailto:someone@example.org?subject=")
     assert len(url) <= 1800
     assert "Secret%20Name" not in url
+
+
+def test_is_auth_failure():
+    assert model.is_auth_failure(412, {"code": "AUTH_INVALID_USERNAME_OR_PASSWORD"})
+    assert model.is_auth_failure(401, None)
+    assert not model.is_auth_failure(500, {"code": "sorry_for_server_exception"})
+    assert not model.is_auth_failure(502, "bad gateway")

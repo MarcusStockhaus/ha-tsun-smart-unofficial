@@ -134,3 +134,10 @@ def mailto_url(report: dict[str, str], email: str, max_len: int = 1800) -> str:
         if len(url) <= max_len or len(summary) < 200:
             return url
         summary = summary[: int(len(summary) * 0.8)].rsplit("\n", 1)[0] + "\n...(shortened)"
+
+
+def is_auth_failure(status: int, body: object) -> bool:
+    """True if a token response means 'wrong credentials' (the cloud answers HTTP 412 for that)."""
+    if isinstance(body, dict) and str(body.get("code", "")).startswith("AUTH_"):
+        return True
+    return status in (400, 401, 403, 412)
