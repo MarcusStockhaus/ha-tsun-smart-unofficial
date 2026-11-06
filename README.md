@@ -43,6 +43,7 @@ reads them and gives you the storage state in Home Assistant.
 | Remaining energy | kWh left in the pack(s) |
 | PV power / PV energy today | from the station summary |
 | Charged / discharged today | kWh |
+| PV / charged / discharged total | lifetime kWh counters (never reset at midnight; best choice for the Energy dashboard) |
 | Battery status | e.g. `discharge` |
 | Cloud status, Last cloud update | diagnostics |
 | Online (binary sensor) | `off` while the logger is offline |

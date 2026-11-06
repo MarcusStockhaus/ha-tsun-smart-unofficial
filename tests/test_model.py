@@ -104,3 +104,11 @@ def test_is_auth_failure():
     assert model.is_auth_failure(401, None)
     assert not model.is_auth_failure(500, {"code": "sorry_for_server_exception"})
     assert not model.is_auth_failure(502, "bad gateway")
+
+
+def test_lifetime_counters():
+    flow = {"generationUploadTotal": 0.93, "chargeUploadTotal": 0.54, "dischargeUploadTotal": 1.02}
+    out = model.parse_station(STATION, flow, [])
+    assert (out["pv_total"], out["charge_total"], out["discharge_total"]) == (0.93, 0.54, 1.02)
+    empty = model.parse_station(STATION, {}, [])
+    assert empty["pv_total"] is None

@@ -53,6 +53,10 @@ def parse_station(
         "pv_today": flow.get("generationValue"),
         "charge_today": flow.get("chargeValue"),
         "discharge_today": flow.get("dischargeValue"),
+        # lifetime counters (kWh, never reset)
+        "pv_total": flow.get("generationUploadTotal"),
+        "charge_total": flow.get("chargeUploadTotal"),
+        "discharge_total": flow.get("dischargeUploadTotal"),
         # remainingCapacity is reported in kWh (verified against SoC and pack size)
         "remaining_energy": round(sum(remaining), 3) if remaining else None,
         "network_status": network,

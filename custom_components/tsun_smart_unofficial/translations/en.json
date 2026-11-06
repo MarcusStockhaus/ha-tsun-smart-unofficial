@@ -60,6 +60,15 @@
       "discharge_today": {
         "name": "Discharged today"
       },
+      "pv_total": {
+        "name": "PV energy total"
+      },
+      "charge_total": {
+        "name": "Charged total"
+      },
+      "discharge_total": {
+        "name": "Discharged total"
+      },
       "battery_status": {
         "name": "Battery status"
       },

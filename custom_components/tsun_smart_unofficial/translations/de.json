@@ -60,6 +60,15 @@
       "discharge_today": {
         "name": "Entladen heute"
       },
+      "pv_total": {
+        "name": "PV-Energie gesamt"
+      },
+      "charge_total": {
+        "name": "Geladen gesamt"
+      },
+      "discharge_total": {
+        "name": "Entladen gesamt"
+      },
       "battery_status": {
         "name": "Akku-Status"
       },

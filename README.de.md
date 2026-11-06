@@ -43,6 +43,7 @@ aus und stellt den Speicherzustand in Home Assistant bereit.
 | Verbleibende Energie | kWh, die noch im Akku sind |
 | PV-Leistung / PV-Energie heute | aus der Anlagenübersicht |
 | Geladen / Entladen heute | kWh |
+| PV / Geladen / Entladen gesamt | Lebenszeitzähler in kWh (werden nicht um Mitternacht zurückgesetzt, beste Wahl für das Energie-Dashboard) |
 | Akku-Status | z. B. `discharge` |
 | Cloud-Status, Letzte Cloud-Aktualisierung | Diagnose |
 | Online (Binärsensor) | `aus`, solange der Logger offline ist |
