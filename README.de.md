@@ -47,7 +47,7 @@ aus und stellt den Speicherzustand in Home Assistant bereit.
 | Akku-Status | z. B. `discharge` |
 | Cloud-Status, Letzte Cloud-Aktualisierung | Diagnose |
 | Online (Binärsensor) | `aus`, solange der Logger offline ist |
-| Geräte-Bericht vorbereiten (Knopf) | erzeugt einen vorausgefüllten GitHub-Issue-Link, siehe [Mithilfe gesucht](#mithilfe-gesucht-weitere-geräte) |
+| Geräte-Bericht (Konfigurieren-Dialog oder Knopf) | zeigt einen vorausgefüllten GitHub-Issue-Link und einen Mail-Link, siehe [Mithilfe gesucht](#mithilfe-gesucht-weitere-geräte) |
 
 Die Werte kommen etwa **alle 5 Minuten** (so oft meldet der Logger an die Cloud). Häufigeres Abfragen bringt keine neueren
 Daten – das Intervall ist zwischen 5 und 60 Minuten einstellbar.
@@ -107,7 +107,7 @@ in derselben App *können* daher funktionieren oder leicht ergänzt werden – v
 
 So hilfst du, ohne zu programmieren:
 
-1. Integration installieren und den Knopf **Geräte-Bericht vorbereiten** drücken (Geräteseite → Diagnose-Entitäten).
+1. Integration installieren und unter Einstellungen → Geräte & Dienste → TSUN Smart (inoffiziell) → **Konfigurieren** → **Geräte-Bericht erstellen** öffnen (der Diagnose-Knopf *Geräte-Bericht vorbereiten* macht dasselbe, zeigt aber nur eine Benachrichtigung).
 2. In Home Assistant erscheint eine Benachrichtigung mit einem Link. Er öffnet ein **vorausgefülltes GitHub-Issue**, das nur die
    *Struktur* deiner Cloud-Daten enthält (Gerätetypen, Produkt-IDs, welche Felder Daten haben) – **keine Werte,
    Seriennummern, Namen oder Adressen**. Es wird nichts automatisch gesendet; du prüfst und sendest es selbst ab.

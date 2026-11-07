@@ -1,6 +1,8 @@
 # Changelog / Änderungsprotokoll
 
 ## 0.2.4 – unreleased / unveröffentlicht
+- EN: The device report is now available in the integration's *Configure* dialog (menu: *Create device report*), with the links and copyable text shown right in the dialog. The button remains and creates a notification.
+- DE: Der Geräte-Bericht ist jetzt im *Konfigurieren*-Dialog der Integration verfügbar (Menü: *Geräte-Bericht erstellen*), mit Links und kopierbarem Text direkt im Dialog. Der Knopf bleibt und erzeugt eine Benachrichtigung.
 - EN: Device report e-mail is now compact but complete: it lists device types, product IDs and only the fields that are new compared to a known DCU2000Lite, instead of being cut off. The GitHub issue and the copyable text in Home Assistant still contain the full structure.
 - DE: Die E-Mail des Geräte-Berichts ist jetzt kompakt, aber vollständig: Sie nennt Gerätetypen, Produkt-IDs und nur die Felder, die gegenüber einem bekannten DCU2000Lite neu sind, statt abgeschnitten zu werden. Das GitHub-Issue und der kopierbare Text in Home Assistant enthalten weiterhin die volle Struktur.
 

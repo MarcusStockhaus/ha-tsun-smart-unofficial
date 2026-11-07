@@ -134,3 +134,10 @@ def test_mail_report_is_compact_and_flags_unknown_devices():
     assert "type=99" in mail and "newField" in mail
     assert len(model.mailto_url(report, "a@b.c")) < 1800
     assert "shortened" not in model.mailto_url(report, "a@b.c")
+
+
+def test_report_message_contains_links_and_text():
+    report = model.build_report("0.2.4", "x", RAW)
+    msg = model.report_message(report, "a@b.c")
+    assert "issues/new?template=device-report.yml" in msg and "mailto:a@b.c" in msg
+    assert report["summary"] in msg and msg.count("```") == 2

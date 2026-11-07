@@ -183,3 +183,26 @@ def is_auth_failure(status: int, body: object) -> bool:
     if isinstance(body, dict) and str(body.get("code", "")).startswith("AUTH_"):
         return True
     return status in (400, 401, 403, 412)
+
+
+REPORT_INTRO = (
+    "**EN:** Nothing was sent. The links below open a prefilled GitHub issue or an e-mail that contain only the "
+    "structure of your cloud data (field names, device types) - no values, serial numbers or names. Review it, add "
+    "what the TSUN Smart app shows that is missing here, and send it yourself.\n\n"
+    "**DE:** Es wurde nichts gesendet. Die Links unten öffnen ein vorausgefülltes GitHub-Issue oder eine E-Mail, die nur "
+    "die Struktur deiner Cloud-Daten enthalten (Feldnamen, Gerätetypen) - keine Werte, Seriennummern oder Namen. "
+    "Prüfe den Text, ergänze, was die TSUN-Smart-App zeigt und hier fehlt, und sende ihn selbst ab.\n\n"
+)
+
+
+def report_message(report: dict[str, str], email: str, repo: str = REPO) -> str:
+    """Markdown shown to the user (notification or dialog): intro, both links and the copyable full text."""
+    return (
+        REPORT_INTRO
+        + f"[GitHub: open prefilled issue / Vorausgefülltes Issue öffnen]({issue_url(report, repo)})\n\n"
+        + f"[No GitHub account? Send by e-mail / Kein GitHub-Konto? Per E-Mail senden]({mailto_url(report, email)})\n\n"
+        + "**Report text (copy if needed) / Berichtstext (bei Bedarf kopieren):**\n\n"
+        + "```\n"
+        + report["summary"]
+        + "\n```"
+    )

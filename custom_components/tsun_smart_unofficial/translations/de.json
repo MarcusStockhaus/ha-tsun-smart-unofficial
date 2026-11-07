@@ -29,11 +29,23 @@
   "options": {
     "step": {
       "init": {
+        "title": "TSUN Smart (inoffiziell)",
+        "description": "Was möchtest du tun?",
+        "menu_options": {
+          "settings": "Abfrageintervall",
+          "report": "Geräte-Bericht erstellen (hilft, weitere Geräte zu unterstützen)"
+        }
+      },
+      "settings": {
         "title": "Abfrage",
         "description": "Die Cloud bekommt nur etwa alle 5 Minuten neue Werte. Bitte nicht häufiger abfragen als nötig.",
         "data": {
           "scan_interval": "Aktualisierungsintervall (Minuten)"
         }
+      },
+      "report": {
+        "title": "Geräte-Bericht",
+        "description": "{report}"
       }
     }
   },

@@ -29,11 +29,23 @@
   "options": {
     "step": {
       "init": {
+        "title": "TSUN Smart (unofficial)",
+        "description": "What would you like to do?",
+        "menu_options": {
+          "settings": "Polling interval",
+          "report": "Create device report (help add support for other devices)"
+        }
+      },
+      "settings": {
         "title": "Polling",
         "description": "The cloud only receives new values about every 5 minutes. Please do not poll more often than necessary.",
         "data": {
           "scan_interval": "Update interval (minutes)"
         }
+      },
+      "report": {
+        "title": "Device report",
+        "description": "{report}"
       }
     }
   },

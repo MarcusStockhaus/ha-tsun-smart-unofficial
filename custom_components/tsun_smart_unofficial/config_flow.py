@@ -11,8 +11,10 @@ import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.loader import async_get_integration
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 
 from .api import TsunApiError, TsunAuthError, TsunSmartApi
@@ -21,10 +23,11 @@ from .const import (
     CONF_SCAN_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    REPORT_EMAIL,
     MAX_SCAN_INTERVAL,
     MIN_SCAN_INTERVAL,
 )
-from .model import hash_password
+from .model import build_report, hash_password, report_message
 
 
 EMAIL = TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username"))
@@ -96,11 +99,14 @@ class TsunSmartConfigFlow(ConfigFlow, domain=DOMAIN):
 
 class TsunOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        return self.async_show_menu(step_id="init", menu_options=["settings", "report"])
+
+    async def async_step_settings(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             return self.async_create_entry(data=user_input)
         current = self.config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
         return self.async_show_form(
-            step_id="init",
+            step_id="settings",
             data_schema=vol.Schema(
                 {
                     vol.Required(CONF_SCAN_INTERVAL, default=current): vol.All(
@@ -108,4 +114,17 @@ class TsunOptionsFlow(OptionsFlow):
                     )
                 }
             ),
+        )
+
+    async def async_step_report(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Show the device report (links + copyable text). Nothing is sent."""
+        if user_input is not None:
+            return self.async_create_entry(data=dict(self.config_entry.options))
+        integration = await async_get_integration(self.hass, DOMAIN)
+        raw = getattr(self.config_entry.runtime_data, "raw", {})
+        report = build_report(str(integration.version), HA_VERSION, raw)
+        return self.async_show_form(
+            step_id="report",
+            data_schema=vol.Schema({}),
+            description_placeholders={"report": report_message(report, REPORT_EMAIL)},
         )

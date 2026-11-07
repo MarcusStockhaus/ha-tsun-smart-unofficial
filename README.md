@@ -47,7 +47,7 @@ reads them and gives you the storage state in Home Assistant.
 | Battery status | e.g. `discharge` |
 | Cloud status, Last cloud update | diagnostics |
 | Online (binary sensor) | `off` while the logger is offline |
-| Prepare device report (button) | creates a prefilled GitHub issue link, see [help wanted](#help-wanted-other-devices) |
+| Device report (Configure dialog or button) | shows a prefilled GitHub issue link and an e-mail link, see [help wanted](#help-wanted-other-devices) |
 
 Values arrive about **every 5 minutes** (that is how often the logger reports to the cloud).
 Polling more often does not give newer data — the interval is configurable between 5 and 60 minutes.
@@ -106,7 +106,7 @@ in the same app *may* work or can be added easily — but only the DCU2000Lite h
 
 You can help without writing code:
 
-1. Install the integration and press the button **Prepare device report** (device page → diagnostic entities).
+1. Install the integration and open Settings → Devices & services → TSUN Smart (unofficial) → **Configure** → **Create device report** (the diagnostic button *Prepare device report* does the same, but only shows a notification).
 2. A Home Assistant notification appears with a link. It opens a **prefilled GitHub issue** that contains only the
    *structure* of your cloud data (device types, product IDs, which fields have data) — **no values, serial numbers,
    names or addresses**. Nothing is sent automatically; you review and submit it yourself.
