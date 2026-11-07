@@ -112,3 +112,10 @@ def test_lifetime_counters():
     assert (out["pv_total"], out["charge_total"], out["discharge_total"]) == (0.93, 0.54, 1.02)
     empty = model.parse_station(STATION, {}, [])
     assert empty["pv_total"] is None
+
+
+def test_last_update_prefers_last_update_time():
+    out = model.parse_station(STATION, {"updateTime": 1000, "lastUpdateTime": 2000}, [])
+    assert int(out["last_update"].timestamp()) == 2000
+    out = model.parse_station(STATION, {"updateTime": 1000, "lastUpdateTime": None}, [])
+    assert int(out["last_update"].timestamp()) == 1000

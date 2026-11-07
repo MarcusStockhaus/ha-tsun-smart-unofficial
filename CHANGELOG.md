@@ -1,5 +1,9 @@
 # Changelog / Änderungsprotokoll
 
+## 0.2.2 – 2026-11-07
+- EN: *Last cloud update* now uses `lastUpdateTime` (moves every 5 minutes with the data) instead of `updateTime` (only about every 30 minutes). Measured over one hour; the data lags real time by roughly 3-10 minutes.
+- DE: *Letzte Cloud-Aktualisierung* nutzt jetzt `lastUpdateTime` (läuft alle 5 Minuten mit den Daten) statt `updateTime` (nur etwa alle 30 Minuten). Über eine Stunde gemessen; die Daten hinken der Echtzeit etwa 3-10 Minuten hinterher.
+
 ## 0.2.1 – 2026-11-06
 - EN: New sensors *PV energy total*, *Charged total*, *Discharged total* (lifetime counters from the cloud, `total_increasing`; suited for the Energy dashboard).
 - DE: Neue Sensoren *PV-Energie gesamt*, *Geladen gesamt*, *Entladen gesamt* (Lebenszeitzähler aus der Cloud, `total_increasing`; geeignet für das Energie-Dashboard).

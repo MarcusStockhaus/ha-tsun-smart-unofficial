@@ -31,6 +31,6 @@ Weitere gesehene, noch ungenutzte Endpunkte: `…/summary/overview` (Online-Zäh
 
 ## Felder (current/flow)
 `batterySoc`, `batteryStatus` (`DISCHARGE`, …), `batteryPower`, `dischargePower`, `generationPower`, `generationValue`,
-`chargeValue`, `dischargeValue`, `networkStatus` (`ALL_OFFLINE`, …), `updateTime` (Unix-Sekunden).
+`chargeValue`, `dischargeValue`, `networkStatus` (`ALL_OFFLINE`, …), `updateTime` (Unix-Sekunden, springt nur etwa alle 30 Minuten), `lastUpdateTime` (Unix-Sekunden, 5-Minuten-Raster, Zeitstempel des neuesten Datenpunkts; die Daten hinken der Echtzeit etwa 3-10 Minuten hinterher).
 `device/common`: `deviceType` 3 = Speicher (DCU), 18 = Logger/Gateway; `batteries[].soc/totalCapacity/remainingCapacity`
 (`remainingCapacity` in kWh; `totalCapacity` sieht nach Ah aus).

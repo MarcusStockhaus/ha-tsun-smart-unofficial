@@ -31,6 +31,6 @@ Other endpoints seen (not used yet): `…/summary/overview` (online counts), `�
 
 ## Fields (current/flow)
 `batterySoc`, `batteryStatus` (`DISCHARGE`, …), `batteryPower`, `dischargePower`, `generationPower`, `generationValue`,
-`chargeValue`, `dischargeValue`, `networkStatus` (`ALL_OFFLINE`, …), `updateTime` (Unix seconds).
+`chargeValue`, `dischargeValue`, `networkStatus` (`ALL_OFFLINE`, …), `updateTime` (Unix seconds, moves only about every 30 minutes), `lastUpdateTime` (Unix seconds, 5-minute grid, timestamp of the newest data point; the data lags real time by roughly 3-10 minutes).
 `device/common`: `deviceType` 3 = storage (DCU), 18 = logger/gateway; `batteries[].soc/totalCapacity/remainingCapacity`
 (`remainingCapacity` is kWh; `totalCapacity` looks like Ah).

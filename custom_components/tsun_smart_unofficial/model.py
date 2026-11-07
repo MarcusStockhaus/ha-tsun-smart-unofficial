@@ -61,7 +61,8 @@ def parse_station(
         "remaining_energy": round(sum(remaining), 3) if remaining else None,
         "network_status": network,
         "online": None if network is None else network != "ALL_OFFLINE",
-        "last_update": _timestamp(flow.get("updateTime")),
+        # lastUpdateTime moves every 5 minutes with the data; updateTime only about every 30 minutes
+        "last_update": _timestamp(flow.get("lastUpdateTime") or flow.get("updateTime")),
         "serials": [d.get("deviceSn") for d in devices if d.get("deviceSn")],
         "device_types": sorted({d.get("deviceType") for d in devices if d.get("deviceType") is not None}),
     }
