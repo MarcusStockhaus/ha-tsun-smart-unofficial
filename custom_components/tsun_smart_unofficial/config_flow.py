@@ -13,6 +13,7 @@ from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResu
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 
 from .api import TsunApiError, TsunAuthError, TsunSmartApi
 from .const import (
@@ -24,6 +25,10 @@ from .const import (
     MIN_SCAN_INTERVAL,
 )
 from .model import hash_password
+
+
+EMAIL = TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username"))
+PASSWORD = TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password"))
 
 
 class TsunSmartConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -58,9 +63,12 @@ class TsunSmartConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(
                     title=username, data={CONF_USERNAME: username, CONF_PASSWORD_HASH: pw_hash}
                 )
+        schema = vol.Schema({vol.Required(CONF_USERNAME): EMAIL, vol.Required(CONF_PASSWORD): PASSWORD})
+        # keep the e-mail after a failed attempt, never the password
+        suggested = {CONF_USERNAME: user_input[CONF_USERNAME]} if user_input else None
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema({vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}),
+            data_schema=self.add_suggested_values_to_schema(schema, suggested),
             errors=errors,
         )
 
@@ -80,7 +88,7 @@ class TsunSmartConfigFlow(ConfigFlow, domain=DOMAIN):
                 )
         return self.async_show_form(
             step_id="reauth_confirm",
-            data_schema=vol.Schema({vol.Required(CONF_PASSWORD): str}),
+            data_schema=vol.Schema({vol.Required(CONF_PASSWORD): PASSWORD}),
             description_placeholders={"username": entry.data[CONF_USERNAME]},
             errors=errors,
         )
