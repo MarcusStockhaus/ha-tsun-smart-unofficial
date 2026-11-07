@@ -1,6 +1,6 @@
 # Changelog / Änderungsprotokoll
 
-## 0.2.3 – unreleased / unveröffentlicht
+## 0.2.3 – 2026-11-07
 - EN: Setup dialog: the password field is now masked, and the e-mail address is kept after a failed login (the password is never kept).
 - DE: Einrichtungsdialog: Das Passwortfeld ist jetzt maskiert, und die E-Mail-Adresse bleibt nach einer fehlgeschlagenen Anmeldung stehen (das Passwort nie).
 
