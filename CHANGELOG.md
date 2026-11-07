@@ -1,5 +1,9 @@
 # Changelog / Änderungsprotokoll
 
+## 0.2.4 – unreleased / unveröffentlicht
+- EN: Device report e-mail is now compact but complete: it lists device types, product IDs and only the fields that are new compared to a known DCU2000Lite, instead of being cut off. The GitHub issue and the copyable text in Home Assistant still contain the full structure.
+- DE: Die E-Mail des Geräte-Berichts ist jetzt kompakt, aber vollständig: Sie nennt Gerätetypen, Produkt-IDs und nur die Felder, die gegenüber einem bekannten DCU2000Lite neu sind, statt abgeschnitten zu werden. Das GitHub-Issue und der kopierbare Text in Home Assistant enthalten weiterhin die volle Struktur.
+
 ## 0.2.3 – 2026-11-07
 - EN: Setup dialog: the password field is now masked, and the e-mail address is kept after a failed login (the password is never kept).
 - DE: Einrichtungsdialog: Das Passwortfeld ist jetzt maskiert, und die E-Mail-Adresse bleibt nach einer fehlgeschlagenen Anmeldung stehen (das Passwort nie).

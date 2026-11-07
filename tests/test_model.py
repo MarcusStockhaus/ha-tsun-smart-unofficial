@@ -119,3 +119,18 @@ def test_last_update_prefers_last_update_time():
     assert int(out["last_update"].timestamp()) == 2000
     out = model.parse_station(STATION, {"updateTime": 1000, "lastUpdateTime": None}, [])
     assert int(out["last_update"].timestamp()) == 1000
+
+
+def test_mail_report_is_compact_and_flags_unknown_devices():
+    flow = {k: 1 for k in model.KNOWN_FLOW_FIELDS}
+    dcu = {k: 1 for k in model.KNOWN_DEVICE_FIELDS[3]}
+    dcu.update(deviceType=3, productId="p3")
+    other = {"deviceType": 99, "productId": "p99", "newField": 1}
+    raw = {1: {"station": {}, "flow": flow, "devices": [dcu, other]}}
+    report = model.build_report("0.2.4", "x", raw)
+    mail = report["mail_summary"]
+    assert "new: none" in mail
+    assert "type=3" in mail and "new fields: none" in mail
+    assert "type=99" in mail and "newField" in mail
+    assert len(model.mailto_url(report, "a@b.c")) < 1800
+    assert "shortened" not in model.mailto_url(report, "a@b.c")

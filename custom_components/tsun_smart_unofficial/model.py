@@ -74,11 +74,43 @@ def parse_station(
 REPO = "MarcusStockhaus/ha-tsun-smart-unofficial"
 _MAX_URL = 7000
 
+# Fields already known from a DCU2000Lite. The compact (e-mail) report lists only what is *not* in here.
+KNOWN_FLOW_FIELDS = frozenset(['acceptDay', 'batteryPower', 'batterySoc', 'batteryStatMethod', 'batteryStatus', 'businessWarningStatus', 'chargeUploadTotal', 'chargeValue', 'consumerWarningStatus', 'createdBy', 'deviceBatteryCount', 'deviceTotalSoc', 'dischargePower', 'dischargeUploadTotal', 'dischargeValue', 'fullPowerHoursDay', 'fullPowerHoursMonth', 'genStatMethod', 'generationCapacity', 'generationPower', 'generationUploadTotal', 'generationUploadTotalOffset', 'generationValue', 'generationValueMonth', 'generationValueTotal', 'generationValueYear', 'geographyType', 'gridAmount', 'gridStatMethod', 'gvForGrid', 'gvForUse', 'id', 'l1UsePower', 'l1UseUploadTotal', 'l1UseValue', 'l2UsePower', 'l2UseUploadTotal', 'l2UseValue', 'l3UsePower', 'l3UseUploadTotal', 'l3UseValue', 'lastUpdateTime', 'networkStatus', 'powerSystemType', 'regionNationId', 'regionTimezone', 'remainingCapacity', 'statSelectStrategy', 'stationId', 'supplyStatus', 'systemId', 'updateTime', 'useAmount', 'useStatMethod', 'useUploadTotal'])
+KNOWN_DEVICE_FIELDS = {18: frozenset({'deviceSn', 'deviceId', 'connectStatus', 'createTime', 'collectionTime', 'deviceStatus', 'deviceType', 'parentStatus', 'parentType', 'productId', 'systemId', 'timeZone', 'parentSn', 'stationId', 'systemName', 'gatewayId'}), 3: frozenset({'productId', 'deviceStatus', 'systemName', 'gatewayId', 'deviceSn', 'createTime', 'parentSn', 'stationId', 'soc', 'connectStatus', 'deviceId', 'parentStatus', 'collectionTime', 'parentType', 'generationToday', 'deviceType', 'systemId', 'timeZone', 'generationPower', 'batteryStatus'})}
+
 
 def _field_names(obj: dict[str, Any]) -> tuple[list[str], list[str]]:
     filled = sorted(k for k, v in obj.items() if v is not None)
     empty = sorted(k for k, v in obj.items() if v is None)
     return filled, empty
+
+
+def _compact_summary(
+    integration_version: str, ha_version: str, raw: dict[Any, dict[str, Any]]
+) -> str:
+    """Short report for e-mail: only what differs from a known DCU2000Lite."""
+    lines = [f"integration: {integration_version}", f"home assistant: {ha_version}", "(compact; full text: copy it from the Home Assistant notification)"]
+    for i, payload in enumerate(raw.values(), 1):
+        station = payload.get("station") or {}
+        flow = payload.get("flow") or {}
+        lines.append(f"## station {i}")
+        for key in ("powerType", "powerSystemType", "geographyType"):
+            if station.get(key) is not None:
+                lines.append(f"{key}: {station[key]}")
+        filled, _ = _field_names(flow)
+        new = [k for k in filled if k not in KNOWN_FLOW_FIELDS]
+        lines.append(f"flow fields: {len(filled)}, new: {', '.join(new) if new else 'none'}")
+        for j, dev in enumerate(payload.get("devices") or [], 1):
+            dtype = dev.get("deviceType")
+            f2, _ = _field_names({k: v for k, v in dev.items() if k != "batteries"})
+            known = KNOWN_DEVICE_FIELDS.get(dtype)
+            extra = f2 if known is None else [k for k in f2 if k not in known]
+            lines.append(
+                f"device {j}: type={dtype} product={dev.get('productId')} "
+                f"batt={len(dev.get('batteries') or [])} status={dev.get('deviceStatus')} "
+                f"{'fields' if known is None else 'new fields'}: {', '.join(extra) if extra else 'none'}"
+            )
+    return "\n".join(lines)
 
 
 def build_report(
@@ -110,7 +142,12 @@ def build_report(
         {d.get("deviceType") for p in raw.values() for d in (p.get("devices") or []) if d.get("deviceType") is not None}
     )
     device = "device types " + ", ".join(str(t) for t in types) if types else "unknown"
-    return {"title": f"[device report] {device}", "device": device, "summary": "\n".join(lines)}
+    return {
+        "title": f"[device report] {device}",
+        "device": device,
+        "summary": "\n".join(lines),
+        "mail_summary": _compact_summary(integration_version, ha_version, raw),
+    }
 
 
 def issue_url(report: dict[str, str], repo: str = REPO, max_len: int = _MAX_URL) -> str:
@@ -133,7 +170,7 @@ def mailto_url(report: dict[str, str], email: str, max_len: int = 1800) -> str:
     """mailto: link with the same value-free summary (for people without a GitHub account)."""
     from urllib.parse import quote
 
-    summary = report["summary"]
+    summary = report.get("mail_summary") or report["summary"]
     while True:
         url = f"mailto:{email}?subject={quote(report['title'])}&body={quote(summary)}"
         if len(url) <= max_len or len(summary) < 200:
