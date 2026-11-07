@@ -57,6 +57,15 @@ Der Logger des DCU ist **nachts bzw. bei niedrigem Akkustand offline** (beobacht
 letzten Werte und meldet `ALL_OFFLINE`. Die Integration zeigt diese letzten Werte; am **Online**-Sensor und an
 **Letzte Cloud-Aktualisierung** siehst du, wie aktuell sie sind.
 
+### Energie-Dashboard (DC-gekoppelte Systeme)
+Der DCU2000Lite ist DC-gekoppelt: Die Module laden den Akku direkt, und der Akku speist deinen Mikro-Wechselrichter (z. B. Hoymiles). Fügst du den Akku ins Energie-Dashboard ein **und** nutzt den AC-Ertrag des Mikro-Wechselrichters als Solarquelle, wird die Akkuentladung doppelt gezählt (sie steckt schon im Ertrag des Wechselrichters).
+
+Vorschlag (eigenes System des Autors, wird noch überprüft):
+- **Solar:** *PV-Energie gesamt* dieser Integration (statt des Wechselrichter-Ertrags).
+- **Akku:** Energie *aus* dem Akku = *Entladen gesamt*, Energie *in* den Akku = *Geladen gesamt*. Der Sensor für die Akkuleistung ist optional; die Cloud meldet Laden negativ, diese Integration zeigt Laden positiv, wähle also „invertiert“, falls du ihn einträgst.
+- Die Cloud-Daten hinken der Echtzeit etwa 3-10 Minuten hinterher, und der DCU selbst zieht offenbar etwa 15 W. Kleine Abweichungen sind normal.
+- Berichte bitte deine Erfahrungen in einem Issue.
+
 ## Voraussetzungen
 
 - Home Assistant **2025.1** oder neuer

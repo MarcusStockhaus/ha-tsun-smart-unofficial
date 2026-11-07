@@ -57,6 +57,15 @@ The DCU's logger is **offline at night / when the battery is low** (seen at 20 %
 last known values and reports `ALL_OFFLINE`. The integration shows those last values; use the **Online** sensor
 and **Last cloud update** to see how fresh they are.
 
+### Energy dashboard (DC-coupled setups)
+The DCU2000Lite is DC-coupled: the panels charge the battery directly, and the battery feeds your micro-inverter (e.g. Hoymiles). If you add the battery to the Energy dashboard **and** use the micro-inverter's AC yield as the solar source, the battery discharge is counted twice (it is already inside the inverter yield).
+
+Suggested setup (author's own system, still being verified):
+- **Solar:** *PV energy total* of this integration (instead of the inverter's yield).
+- **Battery:** energy going *out of* the battery = *Discharged total*, energy going *into* the battery = *Charged total*. The battery power sensor is optional; the cloud reports charging as negative, this integration shows charging as positive, so choose "inverted" if you add it.
+- The cloud data lags real time by roughly 3-10 minutes, and the DCU itself seems to draw about 15 W. Small deviations are normal.
+- Please report your experience in an issue.
+
 ## Requirements
 
 - Home Assistant **2025.1** or newer
