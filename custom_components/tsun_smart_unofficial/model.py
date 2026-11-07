@@ -188,10 +188,12 @@ def is_auth_failure(status: int, body: object) -> bool:
 REPORT_INTRO = (
     "**EN:** Nothing was sent. The links below open a prefilled GitHub issue or an e-mail that contain only the "
     "structure of your cloud data (field names, device types) - no values, serial numbers or names. Review it, add "
-    "what the TSUN Smart app shows that is missing here, and send it yourself.\n\n"
+    "what the TSUN Smart app shows that is missing here, and send it yourself. The e-mail contains only a short "
+    "summary: if your device differs from a DCU2000Lite, please paste the full report text from below into the e-mail.\n\n"
     "**DE:** Es wurde nichts gesendet. Die Links unten öffnen ein vorausgefülltes GitHub-Issue oder eine E-Mail, die nur "
     "die Struktur deiner Cloud-Daten enthalten (Feldnamen, Gerätetypen) - keine Werte, Seriennummern oder Namen. "
-    "Prüfe den Text, ergänze, was die TSUN-Smart-App zeigt und hier fehlt, und sende ihn selbst ab.\n\n"
+    "Prüfe den Text, ergänze, was die TSUN-Smart-App zeigt und hier fehlt, und sende ihn selbst ab. Die E-Mail enthält nur eine Kurzfassung: Weicht dein Gerät von einer "
+    "DCU2000Lite ab, füge bitte zusätzlich den vollständigen Berichtstext von unten in die E-Mail ein.\n\n"
 )
 
 
