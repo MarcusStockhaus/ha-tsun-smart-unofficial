@@ -90,8 +90,8 @@ Vorschlag (eigenes System des Autors, wird noch überprüft):
   Er ist trotzdem eine Zugangsinformation – schütze deine Home-Assistant-Backups.
 - Zugangsdaten und Daten gehen **nur an `pro.talent-monitoring.com`** (TSUNs Cloud), sonst nirgendwohin.
 - Der Client sendet denselben `User-Agent` wie die App, weil die Schnittstelle so beobachtet wurde.
-- Heruntergeladene Diagnosedaten sind geschwärzt (Seriennummern, Adresse, Koordinaten, Namen, Tokens) – trotzdem vor dem
-  Veröffentlichen kurz durchsehen.
+- Heruntergeladene Diagnosedaten sind geschwärzt (Seriennummern, Adresse, Koordinaten, Namen, Tokens, Stations- und Geräte-IDs, Einrichtungsdatum) – trotzdem vor dem
+  Veröffentlichen kurz durchsehen. Am Anfang steht ein Block `home_assistant` / `custom_components`, den Home Assistant selbst ergänzt (er listet *alle* deine Integrationen): diesen Block vor dem Teilen löschen.
 
 ## Nutzungsbedingungen der TSUN-Cloud
 
@@ -113,7 +113,7 @@ So hilfst du, ohne zu programmieren:
    Seriennummern, Namen oder Adressen**. Es wird nichts automatisch gesendet; du prüfst und sendest es selbst ab.
 3. **Kein GitHub-Konto?** Die Benachrichtigung enthält auch einen E-Mail-Link an den Maintainer und den Berichtstext zum Kopieren.
 4. Ergänze, was die App zeigt und hier fehlt. Für mehr Details kannst du zusätzlich die geschwärzte Datei
-   *Diagnose herunterladen* anhängen (vorher auf persönliche Daten prüfen).
+   *Diagnose herunterladen* anhängen (vorher auf persönliche Daten prüfen und den Block `home_assistant` / `custom_components` am Anfang löschen).
 
 Pull Requests sind willkommen – siehe [CONTRIBUTING.de.md](CONTRIBUTING.de.md).
 

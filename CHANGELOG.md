@@ -1,5 +1,9 @@
 # Changelog / Änderungsprotokoll
 
+## 0.2.5 – unreleased / unveröffentlicht
+- EN: Diagnostics now also redact station, device and gateway IDs, set-up dates, time zone and country code, and the station ID is no longer used as a key. README: delete the `home_assistant` / `custom_components` block (added by Home Assistant, lists all your integrations) before sharing a diagnostics file.
+- DE: Die Diagnose schwärzt jetzt auch Stations-, Geräte- und Gateway-IDs, Einrichtungsdaten, Zeitzone und Ländercode; die Stations-ID dient nicht mehr als Schlüssel. README: Den Block `home_assistant` / `custom_components` (von Home Assistant ergänzt, listet alle Integrationen) vor dem Teilen der Diagnosedatei löschen.
+
 ## 0.2.4 – 2026-11-07
 - EN: The device report is now available in the integration's *Configure* dialog (menu: *Create device report*), with the links and copyable text shown right in the dialog. The button remains and creates a notification.
 - DE: Der Geräte-Bericht ist jetzt im *Konfigurieren*-Dialog der Integration verfügbar (Menü: *Geräte-Bericht erstellen*), mit Links und kopierbarem Text direkt im Dialog. Der Knopf bleibt und erzeugt eine Benachrichtigung.

@@ -32,4 +32,4 @@ body:
     id: diagnostics
     attributes:
       label: Diagnostics / Diagnose
-      description: "Prefilled by the 'Prepare device report' button (structure only). Optionally attach the diagnostics file after checking it for personal data. / Vom Knopf 'Geräte-Bericht vorbereiten' vorausgefüllt (nur Struktur). Optional Diagnose-Datei anhängen, vorher auf persönliche Daten prüfen."
+      description: "Prefilled by the 'Prepare device report' button (structure only). Optionally attach the diagnostics file after checking it for personal data and deleting the home_assistant / custom_components block at the top. / Vom Knopf 'Geräte-Bericht vorbereiten' vorausgefüllt (nur Struktur). Optional Diagnose-Datei anhängen, vorher auf persönliche Daten prüfen und den Block home_assistant / custom_components am Anfang löschen."

@@ -90,7 +90,7 @@ Copy `custom_components/tsun_smart_unofficial` into your Home Assistant `config/
   still a credential — protect your Home Assistant backups.
 - Credentials and data go **only to `pro.talent-monitoring.com`** (TSUN's cloud), nothing else.
 - The client sends the same `User-Agent` as the app, because that is what the API was observed with.
-- Diagnostics downloads are redacted (serial numbers, address, coordinates, names, tokens) — still skim them before posting.
+- Diagnostics downloads are redacted (serial numbers, address, coordinates, names, tokens, station and device IDs, set-up dates) — still skim them before posting. The file starts with a block `home_assistant` / `custom_components` that Home Assistant itself adds (it lists *all* your integrations): delete that block before you share the file.
 
 ## Terms of use of the TSUN cloud
 
@@ -112,7 +112,7 @@ You can help without writing code:
    names or addresses**. Nothing is sent automatically; you review and submit it yourself.
 3. **No GitHub account?** The notification also contains an e-mail link to the maintainer and the report text to copy.
 4. Add what the app shows that is missing here. For more detail you can also attach the redacted
-   *Download diagnostics* file (check it for personal data first).
+   *Download diagnostics* file (check it for personal data first and delete the `home_assistant` / `custom_components` block at the top).
 
 Pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
