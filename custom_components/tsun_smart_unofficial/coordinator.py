@@ -12,7 +12,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .api import TsunApiError, TsunAuthError, TsunSmartApi
 from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL, DOMAIN
-from .model import parse_station
+from .model import flatten_device_data, logger_signal, parse_station, storage_device_id
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,8 +41,21 @@ class TsunCoordinator(DataUpdateCoordinator[dict[int, dict[str, Any]]]):
                 sid = station["id"]
                 flow = await self.api.current_flow(sid)
                 devices = await self.api.devices(sid)
+                device_data: dict[str, Any] = {}
+                signal = None
+                device_id = storage_device_id(devices)
+                if device_id is not None:
+                    # Extra detail from the device screen; the main values must not fail if this is unavailable.
+                    try:
+                        device_data = flatten_device_data(await self.api.device_data(sid, device_id))
+                    except TsunApiError as err:
+                        _LOGGER.debug("Device detail unavailable: %s", err)
+                    try:
+                        signal = logger_signal(await self.api.logger_info(device_id))
+                    except TsunApiError as err:
+                        _LOGGER.debug("Logger info unavailable: %s", err)
                 raw[sid] = {"station": station, "flow": flow, "devices": devices}
-                result[sid] = parse_station(station, flow, devices)
+                result[sid] = parse_station(station, flow, devices, device_data, signal)
         except TsunAuthError as err:
             raise ConfigEntryAuthFailed(str(err)) from err
         except TsunApiError as err:

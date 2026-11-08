@@ -25,6 +25,8 @@ Folgeaufrufe: `Authorization: bearer <access_token>`. Ein Refresh mit `grant_typ
 |---|---|
 | Anlagen | `POST /station-s/station/query/list?page=1&size=9999`, Body `{"region":{…null…},"returnTag":true,"powerTypeList":null}` |
 | Aktuelle Werte | `GET /station-s/station/statistic/current/flow/{stationId}?year=J&month=M&day=T` → `stationCurrentDto` |
+| Echtzeitwerte eines Geräts | `POST /device-s/device-monitor/current-data`, Body `{"language":"en","siteId":"<stationId>","deviceId":"<deviceId des Speichers>","needRealTimeDataFlag":true,"tag":"version"}` → `paramCategoryList[].fieldList[]` mit `key`, `value`, `unit`, `storageName` (z. B. `BAT_V`, `BAT_C`, `BAT_MAX_T`, `BAT_P1_SOH`, `DC_V_PV1`); funktioniert mit einem Endkunden-Konto |
+| Logger und WLAN-Signal | `GET /device-s/device-monitor/get-communication/{deviceId}` → Liste mit `signalIntensity` und den Kindgeräten |
 | Geräte und Akkupacks | `GET /station-s/{stationId}/device/common?page=1&size=200` |
 
 Weitere gesehene, noch ungenutzte Endpunkte: `…/summary/overview` (Online-Zähler), `…/electric/energy/analysis/{id}/day`, `…/chargeRatio/{id}`, `…/alert/list`.

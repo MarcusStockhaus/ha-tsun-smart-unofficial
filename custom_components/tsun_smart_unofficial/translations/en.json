@@ -89,6 +89,105 @@
       },
       "last_update": {
         "name": "Last cloud update"
+      },
+      "battery_voltage": {
+        "name": "Battery voltage"
+      },
+      "battery_current": {
+        "name": "Battery current"
+      },
+      "battery_temp_max": {
+        "name": "Battery temperature (max)"
+      },
+      "battery_temp_min": {
+        "name": "Battery temperature (min)"
+      },
+      "battery_soh": {
+        "name": "Battery health (SOH)"
+      },
+      "cell_voltage_max": {
+        "name": "Cell voltage (max)"
+      },
+      "cell_voltage_min": {
+        "name": "Cell voltage (min)"
+      },
+      "battery_remaining_ah": {
+        "name": "Battery remaining capacity"
+      },
+      "battery_dod": {
+        "name": "Depth of discharge (DOD)"
+      },
+      "work_mode": {
+        "name": "Work mode"
+      },
+      "output_state": {
+        "name": "Output state"
+      },
+      "output_power": {
+        "name": "Output power"
+      },
+      "output_voltage": {
+        "name": "Output voltage"
+      },
+      "output_current": {
+        "name": "Output current"
+      },
+      "pv1_power": {
+        "name": "PV1 power"
+      },
+      "pv2_power": {
+        "name": "PV2 power"
+      },
+      "pv1_voltage": {
+        "name": "PV1 voltage"
+      },
+      "pv2_voltage": {
+        "name": "PV2 voltage"
+      },
+      "pv1_current": {
+        "name": "PV1 current"
+      },
+      "pv2_current": {
+        "name": "PV2 current"
+      },
+      "pv1_temp": {
+        "name": "PV1 temperature"
+      },
+      "pv2_temp": {
+        "name": "PV2 temperature"
+      },
+      "pv1_state": {
+        "name": "PV1 state"
+      },
+      "pv2_state": {
+        "name": "PV2 state"
+      },
+      "firmware": {
+        "name": "Firmware"
+      },
+      "battery_firmware": {
+        "name": "Battery firmware"
+      },
+      "use_power": {
+        "name": "Consumption power"
+      },
+      "grid_power": {
+        "name": "Grid power (+import / -export)"
+      },
+      "grid_status": {
+        "name": "Grid status"
+      },
+      "grid_import_total": {
+        "name": "Grid import total"
+      },
+      "grid_export_total": {
+        "name": "Grid export total"
+      },
+      "use_total": {
+        "name": "Consumption total"
+      },
+      "logger_signal": {
+        "name": "Logger Wi-Fi signal"
       }
     },
     "binary_sensor": {

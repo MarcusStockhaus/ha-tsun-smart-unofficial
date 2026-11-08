@@ -44,10 +44,16 @@ reads them and gives you the storage state in Home Assistant.
 | PV power / PV energy today | from the station summary |
 | Charged / discharged today | kWh |
 | PV / charged / discharged total | lifetime kWh counters (never reset at midnight; best choice for the Energy dashboard) |
+| Battery details | voltage, current, min/max temperature, health (SOH), cell voltages (min/max), remaining capacity (Ah), depth of discharge, work mode (e.g. *Constant Power Mode*) |
+| PV inputs and output | PV1/PV2 power and temperature (voltage and current are disabled by default; the PV temperatures are reported by the device, their exact meaning is not documented), output power and state |
+| Logger Wi-Fi signal | diagnostics |
+| House connection *(only if a smart meter reports to the cloud; experimental)* | consumption power, grid power (**+ import / − export**), grid status, grid import / export / consumption totals |
 | Battery status | e.g. `discharge` |
 | Cloud status, Last cloud update | diagnostics |
 | Online (binary sensor) | `off` while the logger is offline |
 | Device report (Configure dialog or button) | shows a prefilled GitHub issue link and an e-mail link, see [help wanted](#help-wanted-other-devices) |
+
+The battery and PV details come from the same screen the app shows under *Devices → Battery → Real-time*; they are only created if your system delivers them. The house-connection sensors were seen on one system with a smart meter; the sign of the grid power for feed-in and the meaning of the totals are still being verified, so treat them as experimental.
 
 Values arrive about **every 5 minutes** (that is how often the logger reports to the cloud).
 Polling more often does not give newer data — the interval is configurable between 5 and 60 minutes.

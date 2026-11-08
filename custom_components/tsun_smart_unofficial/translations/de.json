@@ -89,6 +89,105 @@
       },
       "last_update": {
         "name": "Letzte Cloud-Aktualisierung"
+      },
+      "battery_voltage": {
+        "name": "Batteriespannung"
+      },
+      "battery_current": {
+        "name": "Batteriestrom"
+      },
+      "battery_temp_max": {
+        "name": "Batterietemperatur (max)"
+      },
+      "battery_temp_min": {
+        "name": "Batterietemperatur (min)"
+      },
+      "battery_soh": {
+        "name": "Batteriezustand (SOH)"
+      },
+      "cell_voltage_max": {
+        "name": "Zellspannung (max)"
+      },
+      "cell_voltage_min": {
+        "name": "Zellspannung (min)"
+      },
+      "battery_remaining_ah": {
+        "name": "Restkapazität Batterie"
+      },
+      "battery_dod": {
+        "name": "Entladetiefe (DOD)"
+      },
+      "work_mode": {
+        "name": "Arbeitsmodus"
+      },
+      "output_state": {
+        "name": "Ausgangsstatus"
+      },
+      "output_power": {
+        "name": "Ausgangsleistung"
+      },
+      "output_voltage": {
+        "name": "Ausgangsspannung"
+      },
+      "output_current": {
+        "name": "Ausgangsstrom"
+      },
+      "pv1_power": {
+        "name": "PV1-Leistung"
+      },
+      "pv2_power": {
+        "name": "PV2-Leistung"
+      },
+      "pv1_voltage": {
+        "name": "PV1-Spannung"
+      },
+      "pv2_voltage": {
+        "name": "PV2-Spannung"
+      },
+      "pv1_current": {
+        "name": "PV1-Strom"
+      },
+      "pv2_current": {
+        "name": "PV2-Strom"
+      },
+      "pv1_temp": {
+        "name": "PV1-Temperatur"
+      },
+      "pv2_temp": {
+        "name": "PV2-Temperatur"
+      },
+      "pv1_state": {
+        "name": "PV1-Status"
+      },
+      "pv2_state": {
+        "name": "PV2-Status"
+      },
+      "firmware": {
+        "name": "Firmware"
+      },
+      "battery_firmware": {
+        "name": "Batterie-Firmware"
+      },
+      "use_power": {
+        "name": "Verbrauchsleistung"
+      },
+      "grid_power": {
+        "name": "Netzleistung (+Bezug / -Einspeisung)"
+      },
+      "grid_status": {
+        "name": "Netzstatus"
+      },
+      "grid_import_total": {
+        "name": "Netzbezug gesamt"
+      },
+      "grid_export_total": {
+        "name": "Netzeinspeisung gesamt"
+      },
+      "use_total": {
+        "name": "Verbrauch gesamt"
+      },
+      "logger_signal": {
+        "name": "WLAN-Signal des Loggers"
       }
     },
     "binary_sensor": {

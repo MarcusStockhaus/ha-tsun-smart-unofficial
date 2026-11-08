@@ -25,6 +25,8 @@ Later requests: `Authorization: bearer <access_token>`. A refresh with `grant_ty
 |---|---|
 | Stations | `POST /station-s/station/query/list?page=1&size=9999` body `{"region":{…null…},"returnTag":true,"powerTypeList":null}` |
 | Current values | `GET /station-s/station/statistic/current/flow/{stationId}?year=Y&month=M&day=D` → `stationCurrentDto` |
+| Device real-time values | `POST /device-s/device-monitor/current-data`, body `{"language":"en","siteId":"<stationId>","deviceId":"<storage deviceId>","needRealTimeDataFlag":true,"tag":"version"}` → `paramCategoryList[].fieldList[]` with `key`, `value`, `unit`, `storageName` (e.g. `BAT_V`, `BAT_C`, `BAT_MAX_T`, `BAT_P1_SOH`, `DC_V_PV1`); works with an end-user account |
+| Logger and Wi-Fi signal | `GET /device-s/device-monitor/get-communication/{deviceId}` → list with `signalIntensity` and the child devices |
 | Devices & battery packs | `GET /station-s/{stationId}/device/common?page=1&size=200` |
 
 Other endpoints seen (not used yet): `…/summary/overview` (online counts), `…/electric/energy/analysis/{id}/day`, `…/chargeRatio/{id}`, `…/alert/list`.

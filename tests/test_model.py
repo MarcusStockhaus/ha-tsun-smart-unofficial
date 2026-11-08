@@ -141,3 +141,72 @@ def test_report_message_contains_links_and_text():
     msg = model.report_message(report, "a@b.c")
     assert "issues/new?template=device-report.yml" in msg and "mailto:a@b.c" in msg
     assert report["summary"] in msg and msg.count("```") == 2
+
+
+DEVICE_SCREEN = {
+    "paramCategoryList": [
+        {"fieldList": [{"storageName": "SN1", "value": "Y001A14C000D0001"}, {"storageName": "DEV_TYP", "value": "DCU2000Lite"}]},
+        {
+            "fieldList": [
+                {"storageName": "BAT_V", "value": "41.94"},
+                {"storageName": "BAT_MAX_T", "value": "8.90"},
+                {"storageName": "BAT_P1_SN", "value": "1004251219DE2239"},
+                {"storageName": "BAT_WM", "value": "Constant Power Mode"},
+                {"storageName": "EMPTY", "value": " "},
+            ]
+        },
+    ]
+}
+
+
+def test_flatten_device_data_numbers_text_and_no_serials():
+    out = model.flatten_device_data(DEVICE_SCREEN)
+    assert out["BAT_V"] == 41.94 and out["BAT_MAX_T"] == 8.9
+    assert out["DEV_TYP"] == "DCU2000Lite" and out["BAT_WM"] == "Constant Power Mode"
+    assert out["EMPTY"] is None
+    assert "SN1" not in out and "BAT_P1_SN" not in out
+    assert model.flatten_device_data(None) == {}
+
+
+def test_logger_signal_and_storage_device_id():
+    assert model.logger_signal([{"signalIntensity": 2}]) == 2
+    assert model.logger_signal([]) is None and model.logger_signal(None) is None
+    assert model.storage_device_id([{"deviceType": 18, "deviceId": 1}, {"deviceType": 3, "deviceId": 7}]) == 7
+    assert model.storage_device_id([{"deviceType": 18, "deviceId": 1}]) is None
+
+
+METER_FLOW = {
+    "batterySoc": 22.0,
+    "batteryStatus": "CHARGE",
+    "batteryPower": -68.1,
+    "usePower": 310.0,
+    "wirePower": 295.0,
+    "wireStatus": "PURCHASE",
+    "buyUploadTotal": 0.83,
+    "gridUploadTotal": 7.67,
+    "useUploadTotal": 162.81,
+}
+
+
+def test_meter_values_only_with_a_meter():
+    with_meter = model.parse_station(STATION, METER_FLOW, DEVICES)
+    assert with_meter["has_meter"] is True
+    assert with_meter["use_power"] == 310.0
+    assert with_meter["grid_power"] == 295.0  # import is positive
+    assert with_meter["grid_import_total"] == 0.83 and with_meter["grid_export_total"] == 7.67
+    # a system without meter reports a lifetime "use" counter equal to generation, but no grid fields
+    without = model.parse_station(STATION, {**FLOW_DISCHARGE, "useUploadTotal": 1.11}, DEVICES)
+    assert without["has_meter"] is False and without["grid_power"] is None
+
+
+def test_grid_power_sign_follows_status():
+    assert model._grid_power({"wirePower": 120.0, "wireStatus": "PURCHASE"}) == 120.0
+    assert model._grid_power({"wirePower": 120.0, "wireStatus": "SELL"}) == -120.0
+    assert model._grid_power({"wirePower": -120.0, "wireStatus": "FEED_IN"}) == -120.0
+    assert model._grid_power({}) is None
+
+
+def test_parse_station_carries_device_screen_and_signal():
+    data = model.parse_station(STATION, FLOW_DISCHARGE, DEVICES, model.flatten_device_data(DEVICE_SCREEN), 2)
+    assert data["dev"]["BAT_V"] == 41.94 and data["logger_signal"] == 2
+    assert model.parse_station(STATION, FLOW_DISCHARGE, DEVICES)["dev"] == {}

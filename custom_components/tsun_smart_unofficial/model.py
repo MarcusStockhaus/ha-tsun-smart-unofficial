@@ -34,8 +34,68 @@ def _timestamp(value: Any) -> datetime | None:
         return None
 
 
+# Fields of the device screen that identify a device; never copied into entity states or diagnostics.
+_SERIAL_FIELDS = frozenset({"SN1", "BAT_P1_SN"})
+
+
+def _number_or_text(value: Any) -> Any:
+    """'41.94' -> 41.94, 'V 0.46' stays text, empty -> None."""
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return value
+    text = str(value).strip()
+    if not text:
+        return None
+    try:
+        return float(text)
+    except ValueError:
+        return text
+
+
+def flatten_device_data(raw: dict[str, Any] | None) -> dict[str, Any]:
+    """Device screen answer -> {storageName: value}. Serial numbers are dropped."""
+    out: dict[str, Any] = {}
+    for category in (raw or {}).get("paramCategoryList") or []:
+        for field in category.get("fieldList") or []:
+            name = field.get("storageName")
+            if not name or name in _SERIAL_FIELDS:
+                continue
+            out[name] = _number_or_text(field.get("value"))
+    return out
+
+
+def logger_signal(info: list[dict[str, Any]] | None) -> int | None:
+    """Wi-Fi signal level of the data logger (0 = none, higher = better)."""
+    for entry in info or []:
+        level = entry.get("signalIntensity")
+        if level is not None:
+            return level
+    return None
+
+
+def _grid_power(flow: dict[str, Any]) -> float | None:
+    """Grid power at the house connection. Positive = import (status PURCHASE); anything else is treated as feed-in."""
+    power = flow.get("wirePower")
+    if power is None:
+        return None
+    return abs(power) if str(flow.get("wireStatus") or "").upper() == "PURCHASE" else -abs(power)
+
+
+def storage_device_id(devices: list[dict[str, Any]]) -> int | None:
+    """Device id of the first storage unit, used for the real-time device screen."""
+    for dev in devices:
+        if dev.get("deviceType") == DEVICE_TYPE_STORAGE and dev.get("deviceId") is not None:
+            return dev["deviceId"]
+    return None
+
+
 def parse_station(
-    station: dict[str, Any], flow: dict[str, Any], devices: list[dict[str, Any]]
+    station: dict[str, Any],
+    flow: dict[str, Any],
+    devices: list[dict[str, Any]],
+    device_data: dict[str, Any] | None = None,
+    signal: int | None = None,
 ) -> dict[str, Any]:
     """Condense one station into the values the entities show."""
     storage = [d for d in devices if d.get("deviceType") == DEVICE_TYPE_STORAGE]
@@ -63,6 +123,19 @@ def parse_station(
         "online": None if network is None else network != "ALL_OFFLINE",
         # lastUpdateTime moves every 5 minutes with the data; updateTime only about every 30 minutes
         "last_update": _timestamp(flow.get("lastUpdateTime") or flow.get("updateTime")),
+        # house connection (only filled when a smart meter is part of the system)
+        "has_meter": any(
+            flow.get(k) is not None for k in ("wirePower", "buyPower", "buyUploadTotal", "gridUploadTotal")
+        ),
+        "use_power": flow.get("usePower"),
+        "grid_power": _grid_power(flow),
+        "grid_status": flow.get("wireStatus"),
+        "grid_import_total": flow.get("buyUploadTotal"),
+        "grid_export_total": flow.get("gridUploadTotal"),
+        "use_total": flow.get("useUploadTotal"),
+        # real-time device screen (battery, PV inputs, output) and logger
+        "dev": device_data or {},
+        "logger_signal": signal,
         "serials": [d.get("deviceSn") for d in devices if d.get("deviceSn")],
         "device_types": sorted({d.get("deviceType") for d in devices if d.get("deviceType") is not None}),
     }

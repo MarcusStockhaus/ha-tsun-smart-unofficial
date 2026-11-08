@@ -123,6 +123,28 @@ class TsunSmartApi:
         )
         return (result or {}).get("stationCurrentDto") or {}
 
+    async def device_data(self, station_id: int, device_id: int) -> dict[str, Any]:
+        """Real-time values of one device (battery voltage, temperatures, ...), as the app's device screen shows them."""
+        return (
+            await self._request(
+                "POST",
+                "/device-s/device-monitor/current-data",
+                json={
+                    "language": "en",
+                    "siteId": str(station_id),
+                    "deviceId": str(device_id),
+                    "needRealTimeDataFlag": True,
+                    "tag": "version",
+                },
+            )
+            or {}
+        )
+
+    async def logger_info(self, device_id: int) -> list[dict[str, Any]]:
+        """Data logger (gateway) of a device, including its Wi-Fi signal strength."""
+        result = await self._request("GET", f"/device-s/device-monitor/get-communication/{device_id}")
+        return result if isinstance(result, list) else []
+
     async def devices(self, station_id: int) -> list[dict[str, Any]]:
         result = await self._request("GET", f"/station-s/{station_id}/device/common?page=1&size=200")
         return (result or {}).get("data", [])

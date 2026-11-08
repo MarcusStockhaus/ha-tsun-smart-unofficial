@@ -44,10 +44,16 @@ aus und stellt den Speicherzustand in Home Assistant bereit.
 | PV-Leistung / PV-Energie heute | aus der Anlagenübersicht |
 | Geladen / Entladen heute | kWh |
 | PV / Geladen / Entladen gesamt | Lebenszeitzähler in kWh (werden nicht um Mitternacht zurückgesetzt, beste Wahl für das Energie-Dashboard) |
+| Akku-Details | Spannung, Strom, Min-/Max-Temperatur, Zustand (SOH), Zellspannungen (min/max), Restkapazität (Ah), Entladetiefe, Arbeitsmodus (z. B. *Konstantleistungsmodus*) |
+| PV-Eingänge und Ausgang | PV1-/PV2-Leistung und -Temperatur (Spannung und Strom sind standardmäßig deaktiviert; die PV-Temperaturen meldet das Gerät, ihre genaue Bedeutung ist nicht dokumentiert), Ausgangsleistung und -status |
+| WLAN-Signal des Loggers | Diagnose |
+| Hausanschluss *(nur wenn ein Smart Meter an die Cloud meldet; experimentell)* | Verbrauchsleistung, Netzleistung (**+ Bezug / − Einspeisung**), Netzstatus, Zähler für Bezug / Einspeisung / Verbrauch gesamt |
 | Akku-Status | z. B. `discharge` |
 | Cloud-Status, Letzte Cloud-Aktualisierung | Diagnose |
 | Online (Binärsensor) | `aus`, solange der Logger offline ist |
 | Geräte-Bericht (Konfigurieren-Dialog oder Knopf) | zeigt einen vorausgefüllten GitHub-Issue-Link und einen Mail-Link, siehe [Mithilfe gesucht](#mithilfe-gesucht-weitere-geräte) |
+
+Die Akku- und PV-Details stammen vom selben Bildschirm, den die App unter *Geräte → Batterie → Echtzeit* zeigt; sie werden nur angelegt, wenn dein System sie liefert. Die Sensoren zum Hausanschluss wurden an einem System mit Smart Meter gesehen; das Vorzeichen der Netzleistung bei Einspeisung und die Bedeutung der Zähler werden noch geprüft, behandle sie also als experimentell.
 
 Die Werte kommen etwa **alle 5 Minuten** (so oft meldet der Logger an die Cloud). Häufigeres Abfragen bringt keine neueren
 Daten – das Intervall ist zwischen 5 und 60 Minuten einstellbar.

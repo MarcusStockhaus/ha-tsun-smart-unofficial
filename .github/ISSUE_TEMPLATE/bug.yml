@@ -12,7 +12,7 @@ body:
     id: versions
     attributes:
       label: Versions / Versionen
-      placeholder: "Home Assistant 2026.x, integration 0.2.5"
+      placeholder: "Home Assistant 2026.x, integration 0.3.0"
   - type: textarea
     id: logs
     attributes:

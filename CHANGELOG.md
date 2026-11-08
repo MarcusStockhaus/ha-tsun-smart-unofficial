@@ -1,5 +1,11 @@
 # Changelog / Änderungsprotokoll
 
+## 0.3.0 – 2026-11-08
+- EN: New battery detail sensors from the app's device screen (voltage, current, min/max temperature, health SOH, min/max cell voltage, remaining capacity in Ah, depth of discharge, work mode), PV1/PV2 and output values, firmware versions and the logger's Wi-Fi signal. They are created only if the cloud delivers a value. This works with a normal (end-user) account.
+- DE: Neue Akku-Detailsensoren vom Geräte-Bildschirm der App (Spannung, Strom, Min-/Max-Temperatur, Zustand SOH, min./max. Zellspannung, Restkapazität in Ah, Entladetiefe, Arbeitsmodus), PV1/PV2- und Ausgangswerte, Firmware-Versionen und das WLAN-Signal des Loggers. Sie werden nur angelegt, wenn die Cloud einen Wert liefert. Funktioniert mit einem normalen Endkunden-Konto.
+- EN: Experimental house-connection sensors (consumption, grid power, grid import/export/consumption totals), only if a smart meter reports to the cloud. Grid power: positive = import; the sign for feed-in is still to be verified.
+- DE: Experimentelle Sensoren zum Hausanschluss (Verbrauch, Netzleistung, Zähler für Bezug/Einspeisung/Verbrauch), nur wenn ein Smart Meter an die Cloud meldet. Netzleistung: positiv = Bezug; das Vorzeichen bei Einspeisung ist noch zu prüfen.
+
 ## 0.2.5 – 2026-11-08
 - EN: Diagnostics now also redact station, device and gateway IDs, set-up dates, time zone and country code, and the station ID is no longer used as a key. README: delete the `home_assistant` / `custom_components` block (added by Home Assistant, lists all your integrations) before sharing a diagnostics file.
 - DE: Die Diagnose schwärzt jetzt auch Stations-, Geräte- und Gateway-IDs, Einrichtungsdaten, Zeitzone und Ländercode; die Stations-ID dient nicht mehr als Schlüssel. README: Den Block `home_assistant` / `custom_components` (von Home Assistant ergänzt, listet alle Integrationen) vor dem Teilen der Diagnosedatei löschen.
