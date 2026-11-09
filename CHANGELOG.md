@@ -1,5 +1,9 @@
 # Changelog / Änderungsprotokoll
 
+## 0.3.2 – 2026-11-09
+- EN: Battery health (SOH), minimum/maximum cell voltage, remaining capacity (Ah) and depth of discharge are now regular sensors instead of diagnostic ones, so they show up in dashboards and device cards. Firmware, output state, logger signal level and meter type stay diagnostic. Suggested by a tester.
+- DE: Zustand (SOH), min./max. Zellspannung, Restkapazität (Ah) und Entladetiefe sind jetzt normale Sensoren statt Diagnosewerte und erscheinen damit in Dashboards und auf der Geräteseite. Firmware, Ausgangszustand, Signalstufe des Loggers und Zählertyp bleiben Diagnose. Anregung eines Testers.
+
 ## 0.3.1 – 2026-11-09
 - EN: Voltages and currents are displayed with two decimals (a voltage of 50.43 V was shown as 50 V in some views; the value itself was always exact).
 - DE: Spannungen und Ströme werden mit zwei Nachkommastellen angezeigt (50,43 V erschien in manchen Ansichten als 50 V; der Wert selbst war immer exakt).

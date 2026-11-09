@@ -86,15 +86,11 @@ DEVICE_SENSORS: tuple[TsunSensorDescription, ...] = (
     _dev_sensor("BAT_C", "battery_current", **_AMP),
     _dev_sensor("BAT_MAX_T", "battery_temp_max", **_TEMP),
     _dev_sensor("BAT_MIN_T", "battery_temp_min", **_TEMP),
-    _dev_sensor(
-        "BAT_P1_SOH", "battery_soh", native_unit_of_measurement=PERCENTAGE, state_class=_MEAS, entity_category=_DIAG
-    ),
-    _dev_sensor("BAT_P1_MAX_CV", "cell_voltage_max", entity_category=_DIAG, **_MV),
-    _dev_sensor("BAT_P1_MIN_CV", "cell_voltage_min", entity_category=_DIAG, **_MV),
-    _dev_sensor(
-        "BAT_P1_RES_CAP", "battery_remaining_ah", native_unit_of_measurement="Ah", state_class=_MEAS, entity_category=_DIAG
-    ),
-    _dev_sensor("BAT_P1_DOD", "battery_dod", native_unit_of_measurement=PERCENTAGE, entity_category=_DIAG),
+    _dev_sensor("BAT_P1_SOH", "battery_soh", native_unit_of_measurement=PERCENTAGE, state_class=_MEAS),
+    _dev_sensor("BAT_P1_MAX_CV", "cell_voltage_max", **_MV),
+    _dev_sensor("BAT_P1_MIN_CV", "cell_voltage_min", **_MV),
+    _dev_sensor("BAT_P1_RES_CAP", "battery_remaining_ah", native_unit_of_measurement="Ah", state_class=_MEAS),
+    _dev_sensor("BAT_P1_DOD", "battery_dod", native_unit_of_measurement=PERCENTAGE),
     _dev_sensor("BAT_WM", "work_mode"),
     _dev_sensor("OUT_OS", "output_state", entity_category=_DIAG),
     _dev_sensor("PV_OUT_P", "output_power", **_WATT),
