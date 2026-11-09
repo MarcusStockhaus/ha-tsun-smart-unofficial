@@ -187,7 +187,19 @@
         "name": "Consumption total"
       },
       "logger_signal": {
-        "name": "Logger Wi-Fi signal"
+        "name": "Logger signal level"
+      },
+      "meter_type": {
+        "name": "Smart meter type"
+      },
+      "meter_power_a": {
+        "name": "Smart meter power phase A"
+      },
+      "meter_power_b": {
+        "name": "Smart meter power phase B"
+      },
+      "meter_power_c": {
+        "name": "Smart meter power phase C"
       }
     },
     "binary_sensor": {

@@ -45,15 +45,17 @@ reads them and gives you the storage state in Home Assistant.
 | Charged / discharged today | kWh |
 | PV / charged / discharged total | lifetime kWh counters (never reset at midnight; best choice for the Energy dashboard) |
 | Battery details | voltage, current, min/max temperature, health (SOH), cell voltages (min/max), remaining capacity (Ah), depth of discharge, work mode (e.g. *Constant Power Mode*) |
-| PV inputs and output | PV1/PV2 power and temperature (voltage and current are disabled by default; the PV temperatures are reported by the device, their exact meaning is not documented), output power and state |
-| Logger Wi-Fi signal | diagnostics |
-| House connection *(only if a smart meter reports to the cloud; experimental)* | consumption power, grid power (**+ import / − export**), grid status, grid import / export / consumption totals |
+| PV inputs and output | PV1/PV2 power and temperature (voltage and current are disabled by default; the PV temperatures are those of the MPPT inputs inside the DCU, not of the panels), output power and state |
+| Logger signal level | diagnostics, disabled by default; the scale is unclear (the app shows a different number on the logger page) |
+| House connection *(only if a smart meter reports to the cloud; experimental)* | consumption power, grid power (**+ import / − export**), grid status; disabled by default: grid import / export / consumption totals, smart meter type and per-phase power |
 | Battery status | e.g. `discharge` |
 | Cloud status, Last cloud update | diagnostics |
 | Online (binary sensor) | `off` while the logger is offline |
 | Device report (Configure dialog or button) | shows a prefilled GitHub issue link and an e-mail link, see [help wanted](#help-wanted-other-devices) |
 
-The battery and PV details come from the same screen the app shows under *Devices → Battery → Real-time*; they are only created if your system delivers them. The house-connection sensors were seen on one system with a smart meter; the sign of the grid power for feed-in and the meaning of the totals are still being verified, so treat them as experimental.
+The battery and PV details come from the same screen the app shows under *Devices → Battery → Real-time*; they are only created if your system delivers them. The house-connection sensors were seen on one system with a smart meter (an EcoTracker-compatible meter feeding the DCU, with its values modified by the owner), so treat them as **experimental**: with import the grid power matches the meter, the sign for feed-in is not verified yet, and the three totals were the meter's own counters divided by 1000 and with import/export swapped, so they are disabled by default and not suitable for the energy dashboard. These values are also snapshots that the logger uploads every 5 minutes, not continuous measurements.
+
+The values of one update can come from slightly different moments: the cloud does not give every value its own timestamp, so related values (for example remaining energy and remaining capacity) may briefly not match.
 
 Values arrive about **every 5 minutes** (that is how often the logger reports to the cloud).
 Polling more often does not give newer data — the interval is configurable between 5 and 60 minutes.

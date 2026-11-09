@@ -61,11 +61,13 @@ _VOLT = dict(
     native_unit_of_measurement=UnitOfElectricPotential.VOLT,
     device_class=SensorDeviceClass.VOLTAGE,
     state_class=_MEAS,
+    suggested_display_precision=2,
 )
 _AMP = dict(
     native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
     device_class=SensorDeviceClass.CURRENT,
     state_class=_MEAS,
+    suggested_display_precision=2,
 )
 _WATT = dict(
     native_unit_of_measurement=UnitOfPower.WATT,
@@ -110,6 +112,11 @@ DEVICE_SENSORS: tuple[TsunSensorDescription, ...] = (
     _dev_sensor("PV2_OS", "pv2_state", entity_category=_DIAG, entity_registry_enabled_default=False),
     _dev_sensor("SWv1", "firmware", entity_category=_DIAG, entity_registry_enabled_default=False),
     _dev_sensor("BAT_P1_FW_VER", "battery_firmware", entity_category=_DIAG, entity_registry_enabled_default=False),
+    # Smart meter block of the device screen (only if a meter is connected to the DCU; experimental).
+    _dev_sensor("METER_TYP", "meter_type", entity_category=_DIAG, entity_registry_enabled_default=False),
+    _dev_sensor("A_P_METER", "meter_power_a", entity_category=_DIAG, entity_registry_enabled_default=False, **_WATT),
+    _dev_sensor("B_P_METER", "meter_power_b", entity_category=_DIAG, entity_registry_enabled_default=False, **_WATT),
+    _dev_sensor("C_P_METER", "meter_power_c", entity_category=_DIAG, entity_registry_enabled_default=False, **_WATT),
 )
 
 _METER = lambda d: bool(d["has_meter"])  # noqa: E731
@@ -129,23 +136,25 @@ METER_SENSORS: tuple[TsunSensorDescription, ...] = (
         value_fn=lambda d: (d["grid_status"] or "").lower() or None, optional=True,
         exists_fn=_METER, entity_category=_DIAG,
     ),
+    # The three totals are disabled by default: on the only system seen so far they were the meter's own counters
+    # divided by 1000 and swapped, so they are not usable for the energy dashboard (see README).
     TsunSensorDescription(
         key="grid_import_total", translation_key="grid_import_total",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR, device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING, value_fn=lambda d: d["grid_import_total"],
-        optional=True, exists_fn=_METER,
+        optional=True, exists_fn=_METER, entity_registry_enabled_default=False,
     ),
     TsunSensorDescription(
         key="grid_export_total", translation_key="grid_export_total",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR, device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING, value_fn=lambda d: d["grid_export_total"],
-        optional=True, exists_fn=_METER,
+        optional=True, exists_fn=_METER, entity_registry_enabled_default=False,
     ),
     TsunSensorDescription(
         key="use_total", translation_key="use_total",
         native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR, device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING, value_fn=lambda d: d["use_total"],
-        optional=True, exists_fn=_METER,
+        optional=True, exists_fn=_METER, entity_registry_enabled_default=False,
     ),
     TsunSensorDescription(
         key="logger_signal", translation_key="logger_signal", value_fn=lambda d: d["logger_signal"],

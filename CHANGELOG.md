@@ -1,5 +1,15 @@
 # Changelog / Änderungsprotokoll
 
+## 0.3.1 – 2026-11-09
+- EN: Voltages and currents are displayed with two decimals (a voltage of 50.43 V was shown as 50 V in some views; the value itself was always exact).
+- DE: Spannungen und Ströme werden mit zwei Nachkommastellen angezeigt (50,43 V erschien in manchen Ansichten als 50 V; der Wert selbst war immer exakt).
+- EN: The house-connection totals (grid import / export / consumption) are now disabled by default for new installations: on the only system seen so far they were the smart meter's own counters divided by 1000 with import and export swapped. Not suitable for the energy dashboard. Existing entities are not changed.
+- DE: Die Zähler zum Hausanschluss (Bezug / Einspeisung / Verbrauch gesamt) sind für neue Installationen jetzt standardmäßig deaktiviert: Beim einzigen bisher gesehenen System waren es die Zählerstände des Smart Meters geteilt durch 1000 mit vertauschtem Bezug und Einspeisung. Für das Energie-Dashboard nicht geeignet. Bestehende Entitäten bleiben unverändert.
+- EN: New, disabled by default: smart meter type and per-phase power from the device screen.
+- DE: Neu, standardmäßig deaktiviert: Zählertyp und Leistung je Phase vom Geräte-Bildschirm.
+- EN: The logger signal sensor is renamed to "Logger signal level"; its scale is unclear (the app shows a different number). README: the PV temperatures are those of the MPPT inputs inside the DCU, and values of one update can come from slightly different moments.
+- DE: Der Logger-Sensor heißt jetzt "Signalstufe des Loggers"; die Skala ist unklar (die App zeigt eine andere Zahl). README: Die PV-Temperaturen sind die der MPPT-Eingänge im Inneren der DCU, und Werte eines Updates können aus leicht unterschiedlichen Zeitpunkten stammen.
+
 ## 0.3.0 – 2026-11-08
 - EN: New battery detail sensors from the app's device screen (voltage, current, min/max temperature, health SOH, min/max cell voltage, remaining capacity in Ah, depth of discharge, work mode), PV1/PV2 and output values, firmware versions and the logger's Wi-Fi signal. They are created only if the cloud delivers a value. This works with a normal (end-user) account.
 - DE: Neue Akku-Detailsensoren vom Geräte-Bildschirm der App (Spannung, Strom, Min-/Max-Temperatur, Zustand SOH, min./max. Zellspannung, Restkapazität in Ah, Entladetiefe, Arbeitsmodus), PV1/PV2- und Ausgangswerte, Firmware-Versionen und das WLAN-Signal des Loggers. Sie werden nur angelegt, wenn die Cloud einen Wert liefert. Funktioniert mit einem normalen Endkunden-Konto.

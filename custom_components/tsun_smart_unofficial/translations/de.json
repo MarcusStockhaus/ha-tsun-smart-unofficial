@@ -187,7 +187,19 @@
         "name": "Verbrauch gesamt"
       },
       "logger_signal": {
-        "name": "WLAN-Signal des Loggers"
+        "name": "Signalstufe des Loggers"
+      },
+      "meter_type": {
+        "name": "Zählertyp (Smart Meter)"
+      },
+      "meter_power_a": {
+        "name": "Smart-Meter-Leistung Phase A"
+      },
+      "meter_power_b": {
+        "name": "Smart-Meter-Leistung Phase B"
+      },
+      "meter_power_c": {
+        "name": "Smart-Meter-Leistung Phase C"
       }
     },
     "binary_sensor": {
