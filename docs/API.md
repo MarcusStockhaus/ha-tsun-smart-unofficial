@@ -36,3 +36,7 @@ Other endpoints seen (not used yet): `…/summary/overview` (online counts), `�
 `chargeValue`, `dischargeValue`, `networkStatus` (`ALL_OFFLINE`, …), `updateTime` (Unix seconds, moves only about every 30 minutes), `lastUpdateTime` (Unix seconds, 5-minute grid, timestamp of the newest data point; the data lags real time by roughly 3-10 minutes).
 `device/common`: `deviceType` 3 = storage (DCU), 18 = logger/gateway; `batteries[].soc/totalCapacity/remainingCapacity`
 (`remainingCapacity` is kWh; `totalCapacity` looks like Ah).
+
+Other device types seen in device reports (structure only, no values checked):
+- `deviceType` 5 = smart meter that reports to the DCU. Seen with an EcoTracker IR (product `0_0084_5`, emulated by its owner) and, per a user report, a Shelly Pro 3EM (product `0_0517_5`).
+- `deviceType` 15 = per a user report a TSUN micro-inverter (MS series) with its own logger (type 18, product `35_…`). It carries `generationPower` and `generationToday`. That system was excluded from the cloud by its owner, so both devices showed status 3; the fields have never been seen with values, and the integration creates no sensors for this type.

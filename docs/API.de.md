@@ -36,3 +36,7 @@ Weitere gesehene, noch ungenutzte Endpunkte: `…/summary/overview` (Online-Zäh
 `chargeValue`, `dischargeValue`, `networkStatus` (`ALL_OFFLINE`, …), `updateTime` (Unix-Sekunden, springt nur etwa alle 30 Minuten), `lastUpdateTime` (Unix-Sekunden, 5-Minuten-Raster, Zeitstempel des neuesten Datenpunkts; die Daten hinken der Echtzeit etwa 3-10 Minuten hinterher).
 `device/common`: `deviceType` 3 = Speicher (DCU), 18 = Logger/Gateway; `batteries[].soc/totalCapacity/remainingCapacity`
 (`remainingCapacity` in kWh; `totalCapacity` sieht nach Ah aus).
+
+Weitere in Geräte-Berichten gesehene Gerätetypen (nur Struktur, keine Werte geprüft):
+- `deviceType` 5 = Smart Meter, der an die DCU meldet. Gesehen mit einem EcoTracker IR (Produkt `0_0084_5`, vom Besitzer emuliert) und laut Nutzerbericht einem Shelly Pro 3EM (Produkt `0_0517_5`).
+- `deviceType` 15 = laut Nutzerbericht ein TSUN-Mikrowechselrichter (MS-Serie) mit eigenem Logger (Typ 18, Produkt `35_…`). Er hat `generationPower` und `generationToday`. Dieses System war vom Besitzer aus der Cloud ausgeschlossen, daher zeigten beide Geräte Status 3; die Felder wurden nie mit Werten gesehen, und die Integration legt für diesen Typ keine Sensoren an.
