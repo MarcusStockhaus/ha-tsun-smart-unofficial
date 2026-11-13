@@ -57,7 +57,7 @@ Die Akku- und PV-Details stammen vom selben Bildschirm, den die App unter *Gerä
 
 Die Werte eines Updates können aus leicht unterschiedlichen Zeitpunkten stammen: Die Cloud liefert nicht für jeden Wert einen eigenen Zeitstempel, zusammengehörige Werte (z. B. verbleibende Energie und Restkapazität) passen deshalb kurz mal nicht zusammen.
 
-**Mehrere Speicher in einer Anlage** (zum Beispiel zwei DCU2000Lite): Die Werte der Anlage (Ladestand, Leistung, Zähler) kommen aus der Gesamtsumme der Cloud und umfassen alle Geräte. Die Details des ersten Speichers (Spannung, Temperaturen, Zellspannungen, …) stehen am Anlagengerät; jeder weitere Speicher bekommt ein eigenes Gerät („storage 2“, …) mit eigenem Ladestand, eigener Restenergie und eigenem Akkustatus sowie denselben Detailsensoren. Der zuerst gesehene Speicher bleibt das Hauptgerät der Anlage, die anderen werden an ihrer Cloud-Geräte-ID erkannt. Eine Anlage oder ein Speicher, den die TSUN-Cloud nicht mehr nennt (zum Beispiel für eine Reparatur entfernt oder in der App in eine andere Anlage verschoben), wird in Home Assistant zuerst deaktiviert und erst nach 30 Tagen entfernt; kommt er zurück, wird er mit seiner Historie wieder aktiviert. Das ist neu in 0.3.3/0.3.4 und noch nicht an einem System mit zwei Geräten geprüft, bitte melde, wie es bei dir läuft. Neue oder zurückkehrende Geräte übernimmt ein automatisches Neuladen der Integration.
+Systeme mit mehreren Speichern und Geräte, die verschwinden, sind weiter unten unter [Mehrere Speicher in einer Anlage](#mehrere-speicher-in-einer-anlage) beschrieben.
 
 Die Werte kommen etwa **alle 5 Minuten** (so oft meldet der Logger an die Cloud). Häufigeres Abfragen bringt keine neueren
 Daten – das Intervall ist zwischen 5 und 60 Minuten einstellbar.
@@ -66,6 +66,26 @@ Daten – das Intervall ist zwischen 5 und 60 Minuten einstellbar.
 Der Logger des DCU ist **nachts bzw. bei niedrigem Akkustand offline** (beobachtet bei 20 % SoC). Die Cloud behält dann die
 letzten Werte und meldet `ALL_OFFLINE`. Die Integration zeigt diese letzten Werte; am **Online**-Sensor und an
 **Letzte Cloud-Aktualisierung** siehst du, wie aktuell sie sind.
+
+### Mehrere Speicher in einer Anlage
+*Neu in 0.3.3 und 0.3.4, noch nicht an einem System mit zwei Speichern geprüft – bitte melde, wie es bei dir läuft.*
+
+Zum Beispiel zwei DCU2000Lite in einer Anlage der TSUN-Smart-App:
+- **Werte der Anlage** (Ladestand, Leistung, geladen/entladen, PV-Zähler) kommen aus der Gesamtsumme der Cloud und umfassen alle Speicher zusammen. Die Restenergie addiert die Packs aller Speicher.
+- **Der zuerst gesehene Speicher** ist das Hauptgerät der Anlage („TSUN *Anlagenname*“) und behält seine Entitäten wie bisher. Er bleibt das Hauptgerät, auch wenn die Cloud die Speicher in anderer Reihenfolge liefert.
+- **Jeder weitere Speicher** bekommt ein eigenes Gerät („TSUN *Anlagenname* storage 2“, „storage 3“, …) mit eigenem Ladestand, eigener Restenergie und eigenem Akkustatus, denselben Detailsensoren (Spannung, Strom, Temperaturen, Zellspannungen, SOH, …) und der Signalstufe des Loggers. Die Speicher werden an ihrer Cloud-Geräte-ID erkannt, und jeder behält seine Nummer.
+- Wenn du 0.3.3 mit zwei Speichern in einer Anlage genutzt hast, werden die Entitäten von „storage 2“ in 0.3.4 durch neue ersetzt.
+
+### Wenn ein Speicher oder eine Anlage aus der Cloud verschwindet
+Nennt die TSUN-Cloud einen Speicher oder eine ganze Anlage nicht mehr (zum Beispiel ein Speicher, der für eine Reparatur aus der Anlage genommen, in eine andere Anlage verschoben oder eine gelöschte Anlage), löscht die Integration nicht sofort:
+1. Das Gerät und seine Entitäten werden in Home Assistant **deaktiviert**. Die Historie bleibt.
+2. Nennt die Cloud das Gerät wieder, wird es automatisch **wieder aktiviert**, die Integration lädt sich neu, und die Historie läuft weiter.
+3. Fehlt ein Gerät **30 Tage** lang, wird es samt Entitäten **entfernt**. (Die aufgezeichnete Historie entfernter Entitäten bleibt in der Datenbank, bis der Recorder sie bereinigt.)
+4. Das passiert nur nach einem erfolgreichen Update, das mindestens eine Anlage geliefert hat, ein Aussetzer der Cloud berührt deine Geräte also nicht. Ein veraltetes Gerät kannst du auch von Hand auf seiner Geräteseite löschen.
+
+Fehlt der Hauptspeicher länger als 30 Tage und ist ein anderer Speicher noch da, wird dieser das Hauptgerät der Anlage (seine Werte erscheinen dann am Anlagengerät).
+
+Tipps: Für eine Reparatur ist am einfachsten, den Speicher in der App in der Anlage zu lassen und nur abzuklemmen. Ein Nutzer hat berichtet, dass das Entfernen eines Geräts in der App auch die dort gesammelten Statistiken löscht. Außerdem können sich die Gesamtwerte der Anlage aus der Cloud ändern, wenn ein Speicher fehlt; wie die Cloud sie dann berechnet, ist unbekannt – prüfe also dein Energie-Dashboard, wenn du sie dort nutzt.
 
 ### Energie-Dashboard (DC-gekoppelte Systeme)
 Der DCU2000Lite ist DC-gekoppelt: Die Module laden den Akku direkt, und der Akku speist deinen Mikro-Wechselrichter (z. B. Hoymiles). Fügst du den Akku ins Energie-Dashboard ein **und** nutzt den AC-Ertrag des Mikro-Wechselrichters als Solarquelle, wird die Akkuentladung doppelt gezählt (sie steckt schon im Ertrag des Wechselrichters).

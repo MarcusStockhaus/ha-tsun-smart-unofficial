@@ -57,7 +57,7 @@ The battery and PV details come from the same screen the app shows under *Device
 
 The values of one update can come from slightly different moments: the cloud does not give every value its own timestamp, so related values (for example remaining energy and remaining capacity) may briefly not match.
 
-**Several storage units in one plant** (for example two DCU2000Lite): the plant values (state of charge, power, totals) come from the cloud's plant total and cover all units. The first unit's details (voltage, temperatures, cell voltages, …) are on the plant device; every further unit gets its own device ("storage 2", …) with its own state of charge, remaining energy and battery status plus the same detail sensors. The first unit seen stays the main device of the plant; the others are told apart by their cloud device id. A plant or unit that the TSUN cloud no longer lists (for example removed for a repair, or moved to another plant in the app) is disabled in Home Assistant first and removed only after 30 days; if it comes back it is enabled again with its history. This was added in 0.3.3/0.3.4 and is not yet verified on a system with two units, so please report how it works for you. New or returning devices are picked up by an automatic reload of the integration.
+Systems with several storage units and devices that disappear are described under [Several storage units](#several-storage-units-in-one-plant) below.
 
 Values arrive about **every 5 minutes** (that is how often the logger reports to the cloud).
 Polling more often does not give newer data — the interval is configurable between 5 and 60 minutes.
@@ -66,6 +66,26 @@ Polling more often does not give newer data — the interval is configurable bet
 The DCU's logger is **offline at night / when the battery is low** (seen at 20 % SoC). The cloud then keeps the
 last known values and reports `ALL_OFFLINE`. The integration shows those last values; use the **Online** sensor
 and **Last cloud update** to see how fresh they are.
+
+### Several storage units in one plant
+*Added in 0.3.3 and 0.3.4, not yet verified on a system with two units — please report how it works for you.*
+
+For example two DCU2000Lite in one plant of the TSUN Smart app:
+- **Plant values** (state of charge, power, charged/discharged, PV totals) come from the cloud's plant total and cover all units together. The remaining energy adds up the packs of all units.
+- **The first unit seen** is the main device of the plant ("TSUN *plant name*") and keeps its entities exactly as before. It stays the main device even if the cloud lists the units in a different order.
+- **Every further unit** gets its own device ("TSUN *plant name* storage 2", "storage 3", …) with its own state of charge, remaining energy and battery status, the same detail sensors (voltage, current, temperatures, cell voltages, SOH, …) and the logger signal level. The units are told apart by their cloud device id, and each keeps its number.
+- If you used 0.3.3 with two units in one plant, the entities of "storage 2" are replaced by new ones in 0.3.4.
+
+### When a unit or plant disappears from the cloud
+If the TSUN cloud no longer lists a storage unit or a whole plant (for example a unit taken out of the plant for a repair, moved to another plant, or a deleted plant), the integration does not delete anything at once:
+1. The device and its entities are **disabled** in Home Assistant. Their history stays.
+2. If the cloud lists the device again, it is **enabled again** automatically and the integration reloads itself; the history continues.
+3. A device that stays missing for **30 days** is **removed** with its entities. (The recorded history of removed entities stays in the database until the recorder purges it.)
+4. This only happens after a successful update that returned at least one plant, so a cloud hiccup does not touch your devices. You can also delete a stale device by hand on its device page.
+
+If the main unit is missing for more than 30 days and another unit is still present, the other unit becomes the main device of the plant (its values then appear on the plant device).
+
+Tips: For a repair, the simplest way is to leave the unit in the plant in the app and only disconnect it. A user reported that removing a device in the app also deletes the statistics the app has collected for it. Also note that the plant totals of the cloud may change when a unit is missing; how the cloud calculates them in that case is unknown, so check your energy dashboard if you use them there.
 
 ### Energy dashboard (DC-coupled setups)
 The DCU2000Lite is DC-coupled: the panels charge the battery directly, and the battery feeds your micro-inverter (e.g. Hoymiles). If you add the battery to the Energy dashboard **and** use the micro-inverter's AC yield as the solar source, the battery discharge is counted twice (it is already inside the inverter yield).
