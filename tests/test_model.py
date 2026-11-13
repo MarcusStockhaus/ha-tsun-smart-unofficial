@@ -175,6 +175,35 @@ def test_logger_signal_and_storage_device_id():
     assert model.storage_device_id([{"deviceType": 18, "deviceId": 1}]) is None
 
 
+TWO_UNITS = [
+    {"deviceType": 18, "deviceId": 1, "batteries": []},
+    {"deviceType": 18, "deviceId": 2, "batteries": []},
+    {"deviceType": 3, "deviceId": 7, "batteries": [{"remainingCapacity": 0.4}]},
+    {"deviceType": 3, "deviceId": 8, "batteries": [{"remainingCapacity": 0.6}]},
+]
+
+
+def test_storage_device_ids_lists_all_units_in_order():
+    assert model.storage_device_ids(TWO_UNITS) == [7, 8]
+    assert model.storage_device_ids([{"deviceType": 18, "deviceId": 1}]) == []
+    # a storage device without an id is skipped
+    assert model.storage_device_ids([{"deviceType": 3}, {"deviceType": 3, "deviceId": 9}]) == [9]
+    # the first unit stays the one used for the station device
+    assert model.storage_device_id(TWO_UNITS) == 7
+
+
+def test_parse_station_with_two_units_sums_energy_and_keeps_units():
+    units = [{"dev": {"BAT_V": 50.1}, "logger_signal": 3}]
+    out = model.parse_station(STATION, FLOW_DISCHARGE, TWO_UNITS, {"BAT_V": 49.9}, 2, units)
+    assert out["remaining_energy"] == 1.0
+    assert out["dev"] == {"BAT_V": 49.9} and out["logger_signal"] == 2
+    assert out["units"] == units
+
+
+def test_parse_station_without_extra_units_has_empty_list():
+    assert model.parse_station(STATION, FLOW_DISCHARGE, DEVICES)["units"] == []
+
+
 METER_FLOW = {
     "batterySoc": 22.0,
     "batteryStatus": "CHARGE",

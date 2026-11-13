@@ -82,12 +82,19 @@ def _grid_power(flow: dict[str, Any]) -> float | None:
     return abs(power) if str(flow.get("wireStatus") or "").upper() == "PURCHASE" else -abs(power)
 
 
+def storage_device_ids(devices: list[dict[str, Any]]) -> list[int]:
+    """Device ids of all storage units of a station, in the order the cloud lists them."""
+    return [
+        dev["deviceId"]
+        for dev in devices
+        if dev.get("deviceType") == DEVICE_TYPE_STORAGE and dev.get("deviceId") is not None
+    ]
+
+
 def storage_device_id(devices: list[dict[str, Any]]) -> int | None:
     """Device id of the first storage unit, used for the real-time device screen."""
-    for dev in devices:
-        if dev.get("deviceType") == DEVICE_TYPE_STORAGE and dev.get("deviceId") is not None:
-            return dev["deviceId"]
-    return None
+    ids = storage_device_ids(devices)
+    return ids[0] if ids else None
 
 
 def parse_station(
@@ -96,6 +103,7 @@ def parse_station(
     devices: list[dict[str, Any]],
     device_data: dict[str, Any] | None = None,
     signal: int | None = None,
+    units: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Condense one station into the values the entities show."""
     storage = [d for d in devices if d.get("deviceType") == DEVICE_TYPE_STORAGE]
@@ -136,6 +144,8 @@ def parse_station(
         # real-time device screen (battery, PV inputs, output) and logger
         "dev": device_data or {},
         "logger_signal": signal,
+        # further storage units of the same station (second, third, ...): [{"dev": {...}, "logger_signal": n}]
+        "units": units or [],
         "serials": [d.get("deviceSn") for d in devices if d.get("deviceSn")],
         "device_types": sorted({d.get("deviceType") for d in devices if d.get("deviceType") is not None}),
     }

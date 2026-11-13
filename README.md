@@ -57,6 +57,8 @@ The battery and PV details come from the same screen the app shows under *Device
 
 The values of one update can come from slightly different moments: the cloud does not give every value its own timestamp, so related values (for example remaining energy and remaining capacity) may briefly not match.
 
+**Several storage units in one plant** (for example two DCU2000Lite): the plant values (state of charge, power, totals) come from the cloud's plant total and cover all units. The first unit's details (voltage, temperatures, cell voltages, …) are on the plant device; every further unit gets its own device ("storage 2", …) with the same detail sensors. This was added in 0.3.3 and is not yet verified on a system with two units, so please report how it works for you. New units appear after a reload of the integration.
+
 Values arrive about **every 5 minutes** (that is how often the logger reports to the cloud).
 Polling more often does not give newer data — the interval is configurable between 5 and 60 minutes.
 

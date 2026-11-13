@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -117,6 +117,12 @@ DEVICE_SENSORS: tuple[TsunSensorDescription, ...] = (
 
 _METER = lambda d: bool(d["has_meter"])  # noqa: E731
 
+# Logger Wi-Fi signal level (read per storage unit; the scale is unclear, see README).
+LOGGER_SIGNAL = TsunSensorDescription(
+    key="logger_signal", translation_key="logger_signal", value_fn=lambda d: d["logger_signal"],
+    optional=True, entity_category=_DIAG, state_class=_MEAS,
+)
+
 # House connection: only present when a smart meter reports to the TSUN cloud (experimental, seen on one system).
 METER_SENSORS: tuple[TsunSensorDescription, ...] = (
     TsunSensorDescription(
@@ -152,11 +158,11 @@ METER_SENSORS: tuple[TsunSensorDescription, ...] = (
         state_class=SensorStateClass.TOTAL_INCREASING, value_fn=lambda d: d["use_total"],
         optional=True, exists_fn=_METER, entity_registry_enabled_default=False,
     ),
-    TsunSensorDescription(
-        key="logger_signal", translation_key="logger_signal", value_fn=lambda d: d["logger_signal"],
-        optional=True, entity_category=_DIAG, state_class=_MEAS,
-    ),
+    LOGGER_SIGNAL,
 )
+
+# What a further storage unit of the same station gets (the first unit's values sit on the station device).
+UNIT_SENSORS: tuple[TsunSensorDescription, ...] = (*DEVICE_SENSORS, LOGGER_SIGNAL)
 
 
 SENSORS: tuple[TsunSensorDescription, ...] = (
@@ -273,12 +279,21 @@ async def async_setup_entry(
             return False
         return description.value_fn(data) is not None
 
-    async_add_entities(
+    entities: list[TsunSensor] = [
         TsunSensor(coordinator, station_id, description)
         for station_id, data in coordinator.data.items()
         for description in (*SENSORS, *DEVICE_SENSORS, *METER_SENSORS)
         if wanted(description, data)
-    )
+    ]
+    # Further storage units of a station (e.g. two DCU2000Lite in one plant) get their own device and entities.
+    # Their keys carry a suffix so the unique ids of the first unit stay unchanged.
+    for station_id, data in coordinator.data.items():
+        for index, unit in enumerate(data.get("units", [])):
+            for description in UNIT_SENSORS:
+                if wanted(description, unit):
+                    unit_description = replace(description, key=f"{description.key}_unit{index + 2}")
+                    entities.append(TsunSensor(coordinator, station_id, unit_description, index))
+    async_add_entities(entities)
 
 
 class TsunSensor(TsunEntity, SensorEntity):

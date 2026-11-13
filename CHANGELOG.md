@@ -1,5 +1,9 @@
 # Changelog / Änderungsprotokoll
 
+## 0.3.3 – 2026-11-13
+- EN: Several storage units in one plant (for example two DCU2000Lite): every further unit now gets its own device ("storage 2", …) with the detail sensors (voltage, current, temperatures, cell voltages, SOH, …) and the logger signal level. Before, only the first unit's details were read. The entities of the first unit are unchanged. Not yet verified on a system with two units; new units appear after a reload of the integration.
+- DE: Mehrere Speicher in einer Anlage (zum Beispiel zwei DCU2000Lite): Jeder weitere Speicher bekommt jetzt ein eigenes Gerät („storage 2“, …) mit den Detailsensoren (Spannung, Strom, Temperaturen, Zellspannungen, SOH, …) und der Signalstufe des Loggers. Bisher wurden nur die Details des ersten Geräts gelesen. Die Entitäten des ersten Geräts bleiben unverändert. An einem System mit zwei Geräten noch nicht geprüft; neue Geräte erscheinen nach einem Neuladen der Integration.
+
 ## 0.3.2 – 2026-11-09
 - EN: Battery health (SOH), minimum/maximum cell voltage, remaining capacity (Ah) and depth of discharge are now regular sensors instead of diagnostic ones, so they show up in dashboards and device cards. Firmware, output state, logger signal level and meter type stay diagnostic. Suggested by a tester.
 - DE: Zustand (SOH), min./max. Zellspannung, Restkapazität (Ah) und Entladetiefe sind jetzt normale Sensoren statt Diagnosewerte und erscheinen damit in Dashboards und auf der Geräteseite. Firmware, Ausgangszustand, Signalstufe des Loggers und Zählertyp bleiben Diagnose. Anregung eines Testers.

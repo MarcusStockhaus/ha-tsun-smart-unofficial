@@ -57,6 +57,8 @@ Die Akku- und PV-Details stammen vom selben Bildschirm, den die App unter *Gerä
 
 Die Werte eines Updates können aus leicht unterschiedlichen Zeitpunkten stammen: Die Cloud liefert nicht für jeden Wert einen eigenen Zeitstempel, zusammengehörige Werte (z. B. verbleibende Energie und Restkapazität) passen deshalb kurz mal nicht zusammen.
 
+**Mehrere Speicher in einer Anlage** (zum Beispiel zwei DCU2000Lite): Die Werte der Anlage (Ladestand, Leistung, Zähler) kommen aus der Gesamtsumme der Cloud und umfassen alle Geräte. Die Details des ersten Speichers (Spannung, Temperaturen, Zellspannungen, …) stehen am Anlagengerät; jeder weitere Speicher bekommt ein eigenes Gerät („storage 2“, …) mit denselben Detailsensoren. Das ist neu in 0.3.3 und noch nicht an einem System mit zwei Geräten geprüft, bitte melde, wie es bei dir läuft. Neue Geräte erscheinen nach einem Neuladen der Integration.
+
 Die Werte kommen etwa **alle 5 Minuten** (so oft meldet der Logger an die Cloud). Häufigeres Abfragen bringt keine neueren
 Daten – das Intervall ist zwischen 5 und 60 Minuten einstellbar.
 
