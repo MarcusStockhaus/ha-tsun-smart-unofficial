@@ -161,9 +161,6 @@ METER_SENSORS: tuple[TsunSensorDescription, ...] = (
     LOGGER_SIGNAL,
 )
 
-# What a further storage unit of the same station gets (the first unit's values sit on the station device).
-UNIT_SENSORS: tuple[TsunSensorDescription, ...] = (*DEVICE_SENSORS, LOGGER_SIGNAL)
-
 
 SENSORS: tuple[TsunSensorDescription, ...] = (
     TsunSensorDescription(
@@ -267,6 +264,16 @@ SENSORS: tuple[TsunSensorDescription, ...] = (
 )
 
 
+# What a further storage unit of the same station gets (the first unit's values sit on the station device):
+# its own state of charge, remaining energy and status from the device list, plus the detail sensors.
+_UNIT_BASE_KEYS = ("soc", "remaining_energy", "battery_status")
+UNIT_SENSORS: tuple[TsunSensorDescription, ...] = (
+    *(d for d in SENSORS if d.key in _UNIT_BASE_KEYS),
+    *DEVICE_SENSORS,
+    LOGGER_SIGNAL,
+)
+
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: TsunConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
@@ -286,13 +293,16 @@ async def async_setup_entry(
         if wanted(description, data)
     ]
     # Further storage units of a station (e.g. two DCU2000Lite in one plant) get their own device and entities.
-    # Their keys carry a suffix so the unique ids of the first unit stay unchanged.
+    # Their keys carry the cloud device id so the unique ids of the first unit stay unchanged.
     for station_id, data in coordinator.data.items():
-        for index, unit in enumerate(data.get("units", [])):
+        for unit in data.get("units", []):
             for description in UNIT_SENSORS:
-                if wanted(description, unit):
-                    unit_description = replace(description, key=f"{description.key}_unit{index + 2}")
-                    entities.append(TsunSensor(coordinator, station_id, unit_description, index))
+                # optional: a unit only gets a sensor if the cloud delivers a value for it
+                unit_description = replace(
+                    description, key=f"{description.key}_dev{unit['device_id']}", optional=True
+                )
+                if wanted(unit_description, unit):
+                    entities.append(TsunSensor(coordinator, station_id, unit_description, unit["device_id"]))
     async_add_entities(entities)
 
 

@@ -5,6 +5,7 @@ This module has no Home Assistant imports so it can be unit-tested stand-alone.
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import datetime, timezone
 from typing import Any
 
@@ -82,13 +83,116 @@ def _grid_power(flow: dict[str, Any]) -> float | None:
     return abs(power) if str(flow.get("wireStatus") or "").upper() == "PURCHASE" else -abs(power)
 
 
-def storage_device_ids(devices: list[dict[str, Any]]) -> list[int]:
-    """Device ids of all storage units of a station, in the order the cloud lists them."""
+def storage_devices(devices: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """All storage units of a station that have an id, in the order the cloud lists them."""
     return [
-        dev["deviceId"]
+        dev
         for dev in devices
         if dev.get("deviceType") == DEVICE_TYPE_STORAGE and dev.get("deviceId") is not None
     ]
+
+
+def storage_device_ids(devices: list[dict[str, Any]]) -> list[int]:
+    """Device ids of all storage units of a station, in the order the cloud lists them."""
+    return [dev["deviceId"] for dev in storage_devices(devices)]
+
+
+def storage_unit_summary(device: dict[str, Any]) -> dict[str, Any]:
+    """State of charge, remaining energy and battery status of one storage unit, from the device list."""
+    packs = device.get("batteries") or []
+    remaining = [p.get("remainingCapacity") for p in packs if p.get("remainingCapacity") is not None]
+    soc = device.get("soc")
+    if soc is None:
+        socs = [p.get("soc") for p in packs if p.get("soc") is not None]
+        soc = round(sum(socs) / len(socs), 1) if socs else None
+    return {
+        "soc": soc,
+        "remaining_energy": round(sum(remaining), 3) if remaining else None,
+        "battery_status": device.get("batteryStatus"),
+    }
+
+
+def expected_device_identifiers(data: dict[Any, dict[str, Any]]) -> set[str]:
+    """Device identifiers the current data needs: one per station plus one per further storage unit."""
+    wanted: set[str] = set()
+    for station_id, station in data.items():
+        wanted.add(str(station_id))
+        for unit in station.get("units") or []:
+            wanted.add(f"{station_id}_dev{unit['device_id']}")
+    return wanted
+
+
+def assign_units(
+    state: dict[str, Any], storage: list[dict[str, Any]], now: float, grace: float
+) -> tuple[dict[str, Any] | None, list[tuple[int, dict[str, Any]]]]:
+    """Decide which storage unit is the station's main one and number the others.
+
+    `state` is remembered between polls (and restarts). The main unit is the one seen first and stays
+    the main unit even if the cloud list changes order, so its entities never switch to another battery.
+    If it is gone for longer than `grace` seconds, the next unit takes over. Other units get a stable
+    number (2, 3, ...) the first time they are seen. Returns (main unit or None, [(number, unit), ...]).
+    """
+    by_id = {dev["deviceId"]: dev for dev in storage}
+    ids = list(by_id)
+    ordinals: dict[str, int] = state.setdefault("ordinals", {})
+    primary = state.get("primary")
+    if primary is None and ids:
+        primary = state["primary"] = ids[0]
+    if primary is not None and primary not in by_id:
+        since = state.setdefault("primary_missing", now)
+        if ids and now - since > grace:
+            primary = state["primary"] = ids[0]
+            ordinals.pop(str(primary), None)
+            state.pop("primary_missing", None)
+    else:
+        state.pop("primary_missing", None)
+    extras: list[tuple[int, dict[str, Any]]] = []
+    for device_id in ids:
+        if device_id == primary:
+            continue
+        if str(device_id) not in ordinals:
+            ordinals[str(device_id)] = max([1, *ordinals.values()]) + 1
+        extras.append((ordinals[str(device_id)], by_id[device_id]))
+    extras.sort(key=lambda item: item[0])
+    return by_id.get(primary), extras
+
+
+_LEGACY_UNIT_ID = re.compile(r"\d+_unit\d+")
+
+
+def plan_device_changes(
+    wanted: set[str],
+    entries: list[dict[str, Any]],
+    missing: dict[str, float],
+    now: float,
+    grace: float,
+) -> tuple[list[str], list[str], list[str], dict[str, float]]:
+    """Plan what to do with the integration's registered devices after a successful poll.
+
+    entries: [{"id": registry id, "ident": our identifier, "disabled": disabled by this integration}].
+    A device the cloud no longer lists is disabled first and removed once it has been missing for longer
+    than `grace` seconds; if it comes back it is enabled again. Identifiers of version 0.3.3 (`..._unitN`)
+    are removed at once. Returns (to_enable, to_disable, to_remove, missing-since by identifier).
+    """
+    missing = {ident: since for ident, since in missing.items() if ident not in wanted}
+    enable: list[str] = []
+    disable: list[str] = []
+    remove: list[str] = []
+    for entry in entries:
+        ident = entry["ident"]
+        if ident in wanted:
+            if entry["disabled"]:
+                enable.append(entry["id"])
+            continue
+        if _LEGACY_UNIT_ID.fullmatch(ident):
+            remove.append(entry["id"])
+            continue
+        since = missing.setdefault(ident, now)
+        if now - since > grace:
+            remove.append(entry["id"])
+        elif not entry["disabled"]:
+            disable.append(entry["id"])
+    return enable, disable, remove, missing
 
 
 def storage_device_id(devices: list[dict[str, Any]]) -> int | None:

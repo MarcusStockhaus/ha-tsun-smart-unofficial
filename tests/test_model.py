@@ -200,6 +200,113 @@ def test_parse_station_with_two_units_sums_energy_and_keeps_units():
     assert out["units"] == units
 
 
+def test_storage_unit_summary_uses_device_values_then_battery_values():
+    full = {"soc": 55.0, "batteryStatus": "CHARGE", "batteries": [{"soc": 50.0, "remainingCapacity": 1.2}, {"remainingCapacity": 0.8}]}
+    assert model.storage_unit_summary(full) == {"soc": 55.0, "remaining_energy": 2.0, "battery_status": "CHARGE"}
+    # no device-level soc: average of the battery packs that report one
+    packs = {"batteries": [{"soc": 40.0}, {"soc": 50.0}]}
+    assert model.storage_unit_summary(packs) == {"soc": 45.0, "remaining_energy": None, "battery_status": None}
+    assert model.storage_unit_summary({}) == {"soc": None, "remaining_energy": None, "battery_status": None}
+
+
+def test_expected_device_identifiers_covers_stations_and_extra_units():
+    data = {
+        10: {"units": [{"device_id": 7}, {"device_id": 8}]},
+        20: {"units": []},
+        30: {},
+    }
+    assert model.expected_device_identifiers(data) == {"10", "10_dev7", "10_dev8", "20", "30"}
+    assert model.expected_device_identifiers({}) == set()
+
+
+GRACE = 30 * 86400
+
+
+def _unit(device_id):
+    return {"deviceType": 3, "deviceId": device_id}
+
+
+def test_assign_units_first_seen_is_main_and_others_are_numbered():
+    state = {}
+    primary, extras = model.assign_units(state, [_unit(7), _unit(8), _unit(9)], 1000, GRACE)
+    assert primary["deviceId"] == 7
+    assert [(n, d["deviceId"]) for n, d in extras] == [(2, 8), (3, 9)]
+    assert state["primary"] == 7
+
+
+def test_assign_units_main_stays_main_when_the_list_order_changes():
+    state = {}
+    model.assign_units(state, [_unit(7), _unit(8)], 1000, GRACE)
+    primary, extras = model.assign_units(state, [_unit(8), _unit(7)], 2000, GRACE)
+    assert primary["deviceId"] == 7
+    assert [(n, d["deviceId"]) for n, d in extras] == [(2, 8)]
+
+
+def test_assign_units_missing_main_is_not_replaced_before_the_grace_period():
+    state = {}
+    model.assign_units(state, [_unit(7), _unit(8)], 1000, GRACE)
+    primary, extras = model.assign_units(state, [_unit(8)], 2000, GRACE)
+    # unit 8 keeps its own number, the main device gets no values for now
+    assert primary is None
+    assert [(n, d["deviceId"]) for n, d in extras] == [(2, 8)]
+    # still within the grace period
+    primary, _ = model.assign_units(state, [_unit(8)], 1000 + GRACE, GRACE)
+    assert primary is None
+    # after the grace period the remaining unit takes over the main device
+    primary, extras = model.assign_units(state, [_unit(8)], 3000 + GRACE, GRACE)
+    assert primary["deviceId"] == 8 and extras == []
+    assert state["primary"] == 8 and "primary_missing" not in state
+
+
+def test_assign_units_returning_main_clears_the_missing_mark():
+    state = {}
+    model.assign_units(state, [_unit(7), _unit(8)], 1000, GRACE)
+    model.assign_units(state, [_unit(8)], 2000, GRACE)
+    primary, _ = model.assign_units(state, [_unit(7), _unit(8)], 3000, GRACE)
+    assert primary["deviceId"] == 7 and "primary_missing" not in state
+
+
+def test_assign_units_without_storage():
+    assert model.assign_units({}, [], 1000, GRACE) == (None, [])
+
+
+def _entry(rid, ident, disabled=False):
+    return {"id": rid, "ident": ident, "disabled": disabled}
+
+
+def test_plan_disables_missing_devices_first_and_removes_them_after_the_grace_period():
+    entries = [_entry("a", "10"), _entry("b", "10_dev8")]
+    enable, disable, remove, missing = model.plan_device_changes({"10"}, entries, {}, 1000, GRACE)
+    assert (enable, disable, remove) == ([], ["b"], [])
+    assert missing == {"10_dev8": 1000}
+    # already disabled, still inside the grace period: nothing to do
+    entries = [_entry("a", "10"), _entry("b", "10_dev8", disabled=True)]
+    assert model.plan_device_changes({"10"}, entries, missing, 2000, GRACE)[:3] == ([], [], [])
+    # after the grace period it is removed
+    enable, disable, remove, missing2 = model.plan_device_changes({"10"}, entries, missing, 1001 + GRACE, GRACE)
+    assert remove == ["b"] and disable == []
+
+
+def test_plan_enables_a_device_that_comes_back_and_forgets_the_missing_mark():
+    entries = [_entry("b", "10_dev8", disabled=True)]
+    enable, disable, remove, missing = model.plan_device_changes(
+        {"10", "10_dev8"}, entries, {"10_dev8": 1000}, 2000, GRACE
+    )
+    assert enable == ["b"] and disable == [] and remove == [] and missing == {}
+
+
+def test_plan_removes_identifiers_of_version_0_3_3_at_once():
+    entries = [_entry("old", "10_unit2"), _entry("main", "10")]
+    enable, disable, remove, missing = model.plan_device_changes({"10"}, entries, {}, 1000, GRACE)
+    assert remove == ["old"] and disable == [] and missing == {}
+
+
+def test_plan_does_not_enable_devices_the_user_disabled():
+    # a wanted device that is not disabled by the integration is left alone
+    entries = [_entry("a", "10", disabled=False)]
+    assert model.plan_device_changes({"10"}, entries, {}, 1000, GRACE)[:3] == ([], [], [])
+
+
 def test_parse_station_without_extra_units_has_empty_list():
     assert model.parse_station(STATION, FLOW_DISCHARGE, DEVICES)["units"] == []
 

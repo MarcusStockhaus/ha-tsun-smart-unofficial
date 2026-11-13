@@ -17,6 +17,9 @@ MIN_SCAN_INTERVAL = 5  # minutes
 DEFAULT_SCAN_INTERVAL = 5  # minutes
 MAX_SCAN_INTERVAL = 60  # minutes
 
+# A plant or storage unit the cloud no longer lists is disabled first and removed after this many days.
+MISSING_GRACE_DAYS = 30
+
 # deviceType values seen in the cloud API
 DEVICE_TYPE_STORAGE = 3  # DCU2000Lite (DC-coupled storage unit)
 DEVICE_TYPE_LOGGER = 18  # WiFi data logger / gateway
