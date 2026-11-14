@@ -332,10 +332,19 @@ def test_unit_values_prefer_the_device_screen():
     assert out["device_time"].hour == 16
 
 
+def test_unit_battery_power_sign_follows_the_unit_status_and_pv_power_is_the_input_total():
+    dev = {"BAT_P": 15.0, "TOT_PV_IN_P": 230.0}
+    discharging = model.unit_values({"batteryStatus": "DISCHARGE"}, dev, timezone.utc)
+    assert discharging["battery_power"] == -15.0 and discharging["pv_power"] == 230.0
+    charging = model.unit_values({"batteryStatus": "CHARGE"}, {"BAT_P": -15.0}, timezone.utc)
+    assert charging["battery_power"] == 15.0
+
+
 def test_unit_values_without_device_screen_fall_back_to_the_device_list():
     out = model.unit_values({"soc": 60.0}, {"BT_SOC": "n/a"}, timezone.utc)
     assert out["soc"] == 60.0
     assert out["charge_total"] is None and out["device_time"] is None
+    assert out["battery_power"] is None and out["pv_power"] is None
 
 
 def test_parse_station_without_extra_units_has_empty_list():

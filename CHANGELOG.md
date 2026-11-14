@@ -1,5 +1,9 @@
 # Changelog / Änderungsprotokoll
 
+## 0.3.6 – 2026-11-14
+- EN: Further storage units also get their own battery power (from the device screen, positive = charging, sign from the unit's battery status) and PV power (total of the PV inputs). The main device is unchanged.
+- DE: Weitere Speicher bekommen außerdem eigene Akkuleistung (vom Geräte-Bildschirm, positiv = Laden, Vorzeichen aus dem Akkustatus des Speichers) und PV-Leistung (Summe der PV-Eingänge). Das Hauptgerät bleibt unverändert.
+
 ## 0.3.5 – 2026-11-14
 - EN: Further storage units of a plant are no longer linked to the plant device. Home Assistant showed them as "connected via" the first unit, which looked like an expansion battery; they are separate DCUs. Existing links are removed automatically.
 - DE: Weitere Speicher einer Anlage sind nicht mehr mit dem Anlagengerät verknüpft. Home Assistant zeigte sie als „verbunden über“ den ersten Speicher, was wie ein Erweiterungsakku aussah; es sind eigenständige DCUs. Bestehende Verknüpfungen werden automatisch entfernt.

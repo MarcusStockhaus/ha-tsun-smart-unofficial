@@ -147,6 +147,11 @@ def unit_values(device: dict[str, Any], dev: dict[str, Any], tz: tzinfo | None) 
     for key, field in _UNIT_DEVICE_FIELDS.items():
         values[key] = _number(dev.get(field))
     values["device_time"] = parse_device_time(dev.get("BAT_TIME"), tz)
+    # Same sign convention as the plant: positive = charging, negative = discharging (from the unit's status).
+    power = _number(dev.get("BAT_P"))
+    status = str(values.get("battery_status") or "").upper()
+    values["battery_power"] = None if power is None else (-abs(power) if status == "DISCHARGE" else abs(power))
+    values["pv_power"] = _number(dev.get("TOT_PV_IN_P"))
     return values
 
 

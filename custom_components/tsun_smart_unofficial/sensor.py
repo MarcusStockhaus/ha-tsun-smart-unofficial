@@ -268,6 +268,8 @@ SENSORS: tuple[TsunSensorDescription, ...] = (
 # its own state of charge, remaining energy, status and energy counters, plus the detail sensors.
 _UNIT_BASE_KEYS = (
     "soc",
+    "battery_power",
+    "pv_power",
     "remaining_energy",
     "battery_status",
     "pv_today",

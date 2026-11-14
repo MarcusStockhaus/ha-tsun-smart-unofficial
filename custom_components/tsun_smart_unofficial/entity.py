@@ -17,6 +17,8 @@ _EMPTY_UNIT: dict[str, Any] = {
     "soc": None,
     "remaining_energy": None,
     "battery_status": None,
+    "battery_power": None,
+    "pv_power": None,
     "pv_today": None,
     "pv_total": None,
     "charge_today": None,
