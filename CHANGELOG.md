@@ -1,5 +1,11 @@
 # Changelog / Änderungsprotokoll
 
+## 0.3.5 – 2026-11-14
+- EN: Further storage units of a plant are no longer linked to the plant device. Home Assistant showed them as "connected via" the first unit, which looked like an expansion battery; they are separate DCUs. Existing links are removed automatically.
+- DE: Weitere Speicher einer Anlage sind nicht mehr mit dem Anlagengerät verknüpft. Home Assistant zeigte sie als „verbunden über“ den ersten Speicher, was wie ein Erweiterungsakku aussah; es sind eigenständige DCUs. Bestehende Verknüpfungen werden automatisch entfernt.
+- EN: Further storage units also get their own PV energy and charged/discharged energy (today and total) and the device time of their values (diagnostic). Their state of charge now comes from the unit's device screen when available. On a system with one unit these device values are identical to the plant values; the main device is unchanged.
+- DE: Weitere Speicher bekommen außerdem eigene PV-Energie und geladene/entladene Energie (heute und gesamt) sowie die Gerätezeit ihrer Werte (Diagnose). Ihr Ladestand kommt jetzt vom Geräte-Bildschirm des Speichers, wenn verfügbar. Bei einem System mit einem Speicher sind diese Gerätewerte identisch mit den Anlagenwerten; das Hauptgerät bleibt unverändert.
+
 ## 0.3.4 – 2026-11-14
 - EN: Plants and storage units that the TSUN cloud no longer lists (for example a unit removed from the plant for a repair, moved to another plant, or a deleted plant) are now disabled in Home Assistant first and removed together with their entities only after 30 days. If the cloud lists them again, they are enabled again with their history. This only happens after a successful update that returned at least one plant. Stale devices can also be deleted by hand in the device page.
 - DE: Anlagen und Speicher, die die TSUN-Cloud nicht mehr nennt (zum Beispiel ein Speicher, der für eine Reparatur aus der Anlage genommen, in eine andere Anlage verschoben oder eine gelöschte Anlage), werden in Home Assistant jetzt zuerst deaktiviert und erst nach 30 Tagen samt Entitäten entfernt. Nennt die Cloud sie wieder, werden sie mit ihrer Historie wieder aktiviert. Das passiert nur nach einem erfolgreichen Update, das mindestens eine Anlage geliefert hat. Veraltete Geräte lassen sich außerdem von Hand auf der Geräteseite löschen.

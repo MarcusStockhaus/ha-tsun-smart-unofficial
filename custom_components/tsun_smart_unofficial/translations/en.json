@@ -90,6 +90,9 @@
       "last_update": {
         "name": "Last cloud update"
       },
+      "device_time": {
+        "name": "Device time of the values"
+      },
       "battery_voltage": {
         "name": "Battery voltage"
       },

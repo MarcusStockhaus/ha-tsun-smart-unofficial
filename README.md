@@ -68,13 +68,16 @@ last known values and reports `ALL_OFFLINE`. The integration shows those last va
 and **Last cloud update** to see how fresh they are.
 
 ### Several storage units in one plant
-*Added in 0.3.3 and 0.3.4, not yet verified on a system with two units — please report how it works for you.*
+*Added in 0.3.3 to 0.3.5. Tested by a user with two DCU2000Lite in one plant (0.3.4); please report how it works for you.*
 
 For example two DCU2000Lite in one plant of the TSUN Smart app:
 - **Plant values** (state of charge, power, charged/discharged, PV totals) come from the cloud's plant total and cover all units together. The remaining energy adds up the packs of all units.
 - **The first unit seen** is the main device of the plant ("TSUN *plant name*") and keeps its entities exactly as before. It stays the main device even if the cloud lists the units in a different order.
-- **Every further unit** gets its own device ("TSUN *plant name* storage 2", "storage 3", …) with its own state of charge, remaining energy and battery status, the same detail sensors (voltage, current, temperatures, cell voltages, SOH, …) and the logger signal level. The units are told apart by their cloud device id, and each keeps its number.
+- **Every further unit** gets its own device ("TSUN *plant name* storage 2", "storage 3", …) with its own state of charge, remaining energy, battery status, PV energy and charged/discharged energy (today and total), the same detail sensors (voltage, current, temperatures, cell voltages, SOH, …), the logger signal level and the device time of its values. Where the device screen delivers them, these values come from the unit itself (on a system with one unit they are identical to the plant values). The units are told apart by their cloud device id, and each keeps its number.
+- The devices of further units are separate devices, not linked to the plant device (until 0.3.4 Home Assistant showed them as "connected via" the first unit, which looked like an expansion battery).
 - If you used 0.3.3 with two units in one plant, the entities of "storage 2" are replaced by new ones in 0.3.4.
+- The *device time of the values* is the plant's local time; the integration assumes Home Assistant runs in the same time zone.
+- A user reported that the TSUN app handles several DCUs in one plant partly as one unit (for example settings per plant and per device, where it is unclear which one applies). That is the app's behaviour; this integration only reads values.
 
 ### When a unit or plant disappears from the cloud
 If the TSUN cloud no longer lists a storage unit or a whole plant (for example a unit taken out of the plant for a repair, moved to another plant, or a deleted plant), the integration does not delete anything at once:

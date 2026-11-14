@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, tzinfo
 from typing import Any
 
 DEVICE_TYPE_STORAGE = 3
@@ -110,6 +110,44 @@ def storage_unit_summary(device: dict[str, Any]) -> dict[str, Any]:
         "remaining_energy": round(sum(remaining), 3) if remaining else None,
         "battery_status": device.get("batteryStatus"),
     }
+
+
+def parse_device_time(value: Any, tz: tzinfo | None) -> datetime | None:
+    """Device timestamp of the device screen ('2026-11-8 16:25:24', local time of the plant) -> aware datetime."""
+    if not value or tz is None:
+        return None
+    try:
+        return datetime.strptime(str(value).strip(), "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
+    except ValueError:
+        return None
+
+
+def _number(value: Any) -> float | None:
+    return value if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
+# Device screen fields of one storage unit -> keys shared with the station values.
+# On a system with one unit these values are identical to the plant values.
+_UNIT_DEVICE_FIELDS = {
+    "pv_today": "DAY_GEN",
+    "pv_total": "TOT_GEN",
+    "charge_today": "BAT_DAY_CE",
+    "charge_total": "BAT_TOT_CE",
+    "discharge_today": "BAT_DAY_DCE",
+    "discharge_total": "BAT_TOT_DCE",
+}
+
+
+def unit_values(device: dict[str, Any], dev: dict[str, Any], tz: tzinfo | None) -> dict[str, Any]:
+    """Own values of a further storage unit: from its device screen where available, else from the device list."""
+    values = storage_unit_summary(device)
+    soc = _number(dev.get("BT_SOC"))
+    if soc is not None:
+        values["soc"] = soc
+    for key, field in _UNIT_DEVICE_FIELDS.items():
+        values[key] = _number(dev.get(field))
+    values["device_time"] = parse_device_time(dev.get("BAT_TIME"), tz)
+    return values
 
 
 def expected_device_identifiers(data: dict[Any, dict[str, Any]]) -> set[str]:

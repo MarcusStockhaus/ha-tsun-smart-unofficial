@@ -68,13 +68,16 @@ letzten Werte und meldet `ALL_OFFLINE`. Die Integration zeigt diese letzten Wert
 **Letzte Cloud-Aktualisierung** siehst du, wie aktuell sie sind.
 
 ### Mehrere Speicher in einer Anlage
-*Neu in 0.3.3 und 0.3.4, noch nicht an einem System mit zwei Speichern geprüft – bitte melde, wie es bei dir läuft.*
+*Neu in 0.3.3 bis 0.3.5. Von einem Nutzer mit zwei DCU2000Lite in einer Anlage getestet (0.3.4); bitte melde, wie es bei dir läuft.*
 
 Zum Beispiel zwei DCU2000Lite in einer Anlage der TSUN-Smart-App:
 - **Werte der Anlage** (Ladestand, Leistung, geladen/entladen, PV-Zähler) kommen aus der Gesamtsumme der Cloud und umfassen alle Speicher zusammen. Die Restenergie addiert die Packs aller Speicher.
 - **Der zuerst gesehene Speicher** ist das Hauptgerät der Anlage („TSUN *Anlagenname*“) und behält seine Entitäten wie bisher. Er bleibt das Hauptgerät, auch wenn die Cloud die Speicher in anderer Reihenfolge liefert.
-- **Jeder weitere Speicher** bekommt ein eigenes Gerät („TSUN *Anlagenname* storage 2“, „storage 3“, …) mit eigenem Ladestand, eigener Restenergie und eigenem Akkustatus, denselben Detailsensoren (Spannung, Strom, Temperaturen, Zellspannungen, SOH, …) und der Signalstufe des Loggers. Die Speicher werden an ihrer Cloud-Geräte-ID erkannt, und jeder behält seine Nummer.
+- **Jeder weitere Speicher** bekommt ein eigenes Gerät („TSUN *Anlagenname* storage 2“, „storage 3“, …) mit eigenem Ladestand, eigener Restenergie, eigenem Akkustatus, PV-Energie und geladener/entladener Energie (heute und gesamt), denselben Detailsensoren (Spannung, Strom, Temperaturen, Zellspannungen, SOH, …), der Signalstufe des Loggers und der Gerätezeit seiner Werte. Wo der Geräte-Bildschirm sie liefert, stammen diese Werte vom Speicher selbst (bei einem System mit einem Speicher sind sie identisch mit den Anlagenwerten). Die Speicher werden an ihrer Cloud-Geräte-ID erkannt, und jeder behält seine Nummer.
+- Die Geräte weiterer Speicher sind eigenständig und nicht mit dem Anlagengerät verknüpft (bis 0.3.4 zeigte Home Assistant sie als „verbunden über“ den ersten Speicher, was wie ein Erweiterungsakku aussah).
 - Wenn du 0.3.3 mit zwei Speichern in einer Anlage genutzt hast, werden die Entitäten von „storage 2“ in 0.3.4 durch neue ersetzt.
+- Die *Gerätezeit der Werte* ist die Ortszeit der Anlage; die Integration nimmt an, dass Home Assistant in derselben Zeitzone läuft.
+- Ein Nutzer berichtet, dass die TSUN-App mehrere DCUs in einer Anlage teilweise wie eine Einheit behandelt (zum Beispiel Einstellungen pro Anlage und pro Gerät, bei denen unklar ist, welche gilt). Das ist Verhalten der App; diese Integration liest nur Werte.
 
 ### Wenn ein Speicher oder eine Anlage aus der Cloud verschwindet
 Nennt die TSUN-Cloud einen Speicher oder eine ganze Anlage nicht mehr (zum Beispiel ein Speicher, der für eine Reparatur aus der Anlage genommen, in eine andere Anlage verschoben oder eine gelöschte Anlage), löscht die Integration nicht sofort:

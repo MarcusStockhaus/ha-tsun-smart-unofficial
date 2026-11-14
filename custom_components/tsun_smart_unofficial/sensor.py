@@ -265,10 +265,29 @@ SENSORS: tuple[TsunSensorDescription, ...] = (
 
 
 # What a further storage unit of the same station gets (the first unit's values sit on the station device):
-# its own state of charge, remaining energy and status from the device list, plus the detail sensors.
-_UNIT_BASE_KEYS = ("soc", "remaining_energy", "battery_status")
+# its own state of charge, remaining energy, status and energy counters, plus the detail sensors.
+_UNIT_BASE_KEYS = (
+    "soc",
+    "remaining_energy",
+    "battery_status",
+    "pv_today",
+    "charge_today",
+    "discharge_today",
+    "pv_total",
+    "charge_total",
+    "discharge_total",
+)
+# Timestamp of the values on the device screen (plant local time).
+DEVICE_TIME = TsunSensorDescription(
+    key="device_time",
+    translation_key="device_time",
+    device_class=SensorDeviceClass.TIMESTAMP,
+    entity_category=EntityCategory.DIAGNOSTIC,
+    value_fn=lambda d: d["device_time"],
+)
 UNIT_SENSORS: tuple[TsunSensorDescription, ...] = (
     *(d for d in SENSORS if d.key in _UNIT_BASE_KEYS),
+    DEVICE_TIME,
     *DEVICE_SENSORS,
     LOGGER_SIGNAL,
 )

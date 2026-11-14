@@ -12,6 +12,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .api import TsunApiError, TsunAuthError, TsunSmartApi
 from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL, DOMAIN, MISSING_GRACE_DAYS
@@ -23,7 +24,7 @@ from .model import (
     parse_station,
     plan_device_changes,
     storage_devices,
-    storage_unit_summary,
+    unit_values,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -104,6 +105,8 @@ class TsunCoordinator(DataUpdateCoordinator[dict[int, dict[str, Any]]]):
                 if primary is not None:
                     first = await self._unit_details(sid, primary)
                 units: list[dict[str, Any]] = []
+                # The device timestamp is the plant's local time; assume Home Assistant runs in the same time zone.
+                tz = dt_util.get_default_time_zone()
                 for ordinal, unit in extras:
                     detail = await self._unit_details(sid, unit)
                     units.append(
@@ -111,7 +114,7 @@ class TsunCoordinator(DataUpdateCoordinator[dict[int, dict[str, Any]]]):
                             "device_id": unit["deviceId"],
                             "ordinal": ordinal,
                             **detail,
-                            **storage_unit_summary(unit),
+                            **unit_values(unit, detail["dev"], tz),
                         }
                     )
                 raw[sid] = {"station": station, "flow": flow, "devices": devices}
@@ -163,6 +166,11 @@ class TsunCoordinator(DataUpdateCoordinator[dict[int, dict[str, Any]]]):
         for device_id in enable:
             _LOGGER.info("Enabling device %s again: the TSUN cloud lists it again", devices[device_id].name)
             registry.async_update_device(device_id, disabled_by=None)
+        # Version 0.3.3/0.3.4 linked further storage units to the plant device ("connected via"), which made them
+        # look like expansion batteries of the first unit. They are separate DCUs, so drop that link.
+        for device_id, device in devices.items():
+            if device_id not in remove and device.via_device_id is not None:
+                registry.async_update_device(device_id, via_device_id=None)
         # New or re-enabled devices have no entities yet: reload once so the platforms create them.
         if self._known is None:
             self._known = wanted

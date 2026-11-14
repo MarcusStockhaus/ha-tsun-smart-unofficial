@@ -90,6 +90,9 @@
       "last_update": {
         "name": "Letzte Cloud-Aktualisierung"
       },
+      "device_time": {
+        "name": "Gerätezeit der Werte"
+      },
       "battery_voltage": {
         "name": "Batteriespannung"
       },

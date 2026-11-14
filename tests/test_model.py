@@ -1,6 +1,6 @@
 """Stand-alone tests for the pure helpers (no Home Assistant required)."""
 import importlib.util
-from datetime import timezone
+from datetime import timedelta, timezone
 from pathlib import Path
 
 _spec = importlib.util.spec_from_file_location(
@@ -305,6 +305,37 @@ def test_plan_does_not_enable_devices_the_user_disabled():
     # a wanted device that is not disabled by the integration is left alone
     entries = [_entry("a", "10", disabled=False)]
     assert model.plan_device_changes({"10"}, entries, {}, 1000, GRACE)[:3] == ([], [], [])
+
+
+def test_parse_device_time_is_local_time_of_the_plant():
+    berlin = timezone(timedelta(hours=1))
+    out = model.parse_device_time("2026-11-8 16:25:24", berlin)
+    assert out.isoformat() == "2026-11-08T16:25:24+01:00"
+    assert model.parse_device_time("2026-11-08 16:25:24", berlin).day == 8
+    assert model.parse_device_time("not a date", berlin) is None
+    assert model.parse_device_time(None, berlin) is None
+    assert model.parse_device_time("2026-11-8 16:25:24", None) is None
+
+
+def test_unit_values_prefer_the_device_screen():
+    device = {"soc": 60.0, "batteryStatus": "DISCHARGE", "batteries": [{"remainingCapacity": 1.4}]}
+    dev = {
+        "BT_SOC": 68.0, "DAY_GEN": 0.56, "TOT_GEN": 169.94, "BAT_DAY_CE": 0.36, "BAT_TOT_CE": 78.8,
+        "BAT_DAY_DCE": 0.3, "BAT_TOT_DCE": 73.29, "BAT_TIME": "2026-11-8 16:25:24",
+    }
+    out = model.unit_values(device, dev, timezone.utc)
+    assert out["soc"] == 68.0
+    assert out["remaining_energy"] == 1.4 and out["battery_status"] == "DISCHARGE"
+    assert (out["pv_today"], out["pv_total"]) == (0.56, 169.94)
+    assert (out["charge_today"], out["charge_total"]) == (0.36, 78.8)
+    assert (out["discharge_today"], out["discharge_total"]) == (0.3, 73.29)
+    assert out["device_time"].hour == 16
+
+
+def test_unit_values_without_device_screen_fall_back_to_the_device_list():
+    out = model.unit_values({"soc": 60.0}, {"BT_SOC": "n/a"}, timezone.utc)
+    assert out["soc"] == 60.0
+    assert out["charge_total"] is None and out["device_time"] is None
 
 
 def test_parse_station_without_extra_units_has_empty_list():

@@ -17,6 +17,13 @@ _EMPTY_UNIT: dict[str, Any] = {
     "soc": None,
     "remaining_energy": None,
     "battery_status": None,
+    "pv_today": None,
+    "pv_total": None,
+    "charge_today": None,
+    "charge_total": None,
+    "discharge_today": None,
+    "discharge_total": None,
+    "device_time": None,
 }
 
 
@@ -50,8 +57,8 @@ class TsunEntity(CoordinatorEntity[TsunCoordinator]):
                 identifiers={(DOMAIN, f"{station_id}_dev{unit_id}")},
                 name=f"TSUN {station['name']} storage {unit.get('ordinal', '?')}",
                 manufacturer="TSUN (cloud data, unofficial)",
+                # No via_device: the units are separate DCUs side by side, not expansion batteries of the first one.
                 model="DCU2000Lite",
-                via_device=(DOMAIN, str(station_id)),
             )
 
     def _find_unit(self, station: dict[str, Any]) -> dict[str, Any] | None:
