@@ -386,3 +386,13 @@ def test_parse_station_carries_device_screen_and_signal():
     data = model.parse_station(STATION, FLOW_DISCHARGE, DEVICES, model.flatten_device_data(DEVICE_SCREEN), 2)
     assert data["dev"]["BAT_V"] == 41.94 and data["logger_signal"] == 2
     assert model.parse_station(STATION, FLOW_DISCHARGE, DEVICES)["dev"] == {}
+
+
+def test_enabled_by_default_since_037():
+    f = model.enabled_by_default_since_037
+    assert f("tsun_smart_unofficial_184837_dev_dc_v_pv1")
+    assert f("tsun_smart_unofficial_184837_dev_dc_c_pv2_dev4711")
+    assert f("tsun_smart_unofficial_184837_dev_pv_out_v")
+    assert not f("tsun_smart_unofficial_184837_dev_pv1_os")
+    assert not f("tsun_smart_unofficial_184837_dev_swv1")
+    assert not f("tsun_smart_unofficial_184837_dev_in_p_pv1")

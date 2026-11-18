@@ -30,9 +30,12 @@ from .entity import TsunEntity
 @dataclass(frozen=True, kw_only=True)
 class TsunSensorDescription(SensorEntityDescription):
     value_fn: Callable[[dict[str, Any]], Any]
-    # Optional sensors are only created if the cloud delivers a value for them (not every system has every part).
+    # Optional sensors are only created if the cloud delivers them (not every system has every part).
     optional: bool = False
     exists_fn: Callable[[dict[str, Any]], bool] | None = None
+    # Field of the device screen: the sensor is created as soon as the cloud lists the field, even if its value
+    # happens to be empty at start-up (it then shows as unknown until a value arrives).
+    dev_field: str | None = None
 
 
 def _dev(key: str) -> Callable[[dict[str, Any]], Any]:
@@ -40,12 +43,13 @@ def _dev(key: str) -> Callable[[dict[str, Any]], Any]:
     return lambda d: d["dev"].get(key)
 
 
-def _dev_sensor(key: str, name_key: str, **kwargs: Any) -> "TsunSensorDescription":
+def _dev_sensor(key: str, name_key: str, *, needs_value: bool = False, **kwargs: Any) -> "TsunSensorDescription":
     return TsunSensorDescription(
         key=f"dev_{key.lower()}",
         translation_key=name_key,
         value_fn=_dev(key),
         optional=True,
+        dev_field=None if needs_value else key,
         **kwargs,
     )
 
@@ -80,7 +84,10 @@ _MV = dict(
     state_class=_MEAS,
 )
 
-# Detail values of the storage unit, from the app's device screen (created only if present).
+# The smart meter fields may be listed empty on systems without a meter, so they need a value to be created.
+_METER_DIAG = dict(needs_value=True, entity_category=_DIAG, entity_registry_enabled_default=False)
+
+# Detail values of the storage unit, from the app's device screen (created if the cloud lists the field).
 DEVICE_SENSORS: tuple[TsunSensorDescription, ...] = (
     _dev_sensor("BAT_V", "battery_voltage", **_VOLT),
     _dev_sensor("BAT_C", "battery_current", **_AMP),
@@ -94,14 +101,14 @@ DEVICE_SENSORS: tuple[TsunSensorDescription, ...] = (
     _dev_sensor("BAT_WM", "work_mode"),
     _dev_sensor("OUT_OS", "output_state", entity_category=_DIAG),
     _dev_sensor("PV_OUT_P", "output_power", **_WATT),
-    _dev_sensor("PV_OUT_V", "output_voltage", entity_registry_enabled_default=False, **_VOLT),
-    _dev_sensor("PV_OUT_C", "output_current", entity_registry_enabled_default=False, **_AMP),
+    _dev_sensor("PV_OUT_V", "output_voltage", **_VOLT),
+    _dev_sensor("PV_OUT_C", "output_current", **_AMP),
     _dev_sensor("IN_P_PV1", "pv1_power", **_WATT),
     _dev_sensor("IN_P_PV2", "pv2_power", **_WATT),
-    _dev_sensor("DC_V_PV1", "pv1_voltage", entity_registry_enabled_default=False, **_VOLT),
-    _dev_sensor("DC_V_PV2", "pv2_voltage", entity_registry_enabled_default=False, **_VOLT),
-    _dev_sensor("DC_C_PV1", "pv1_current", entity_registry_enabled_default=False, **_AMP),
-    _dev_sensor("DC_C_PV2", "pv2_current", entity_registry_enabled_default=False, **_AMP),
+    _dev_sensor("DC_V_PV1", "pv1_voltage", **_VOLT),
+    _dev_sensor("DC_V_PV2", "pv2_voltage", **_VOLT),
+    _dev_sensor("DC_C_PV1", "pv1_current", **_AMP),
+    _dev_sensor("DC_C_PV2", "pv2_current", **_AMP),
     _dev_sensor("PV1_T", "pv1_temp", **_TEMP),
     _dev_sensor("PV2_T", "pv2_temp", **_TEMP),
     _dev_sensor("PV1_OS", "pv1_state", entity_category=_DIAG, entity_registry_enabled_default=False),
@@ -109,10 +116,10 @@ DEVICE_SENSORS: tuple[TsunSensorDescription, ...] = (
     _dev_sensor("SWv1", "firmware", entity_category=_DIAG, entity_registry_enabled_default=False),
     _dev_sensor("BAT_P1_FW_VER", "battery_firmware", entity_category=_DIAG, entity_registry_enabled_default=False),
     # Smart meter block of the device screen (only if a meter is connected to the DCU; experimental).
-    _dev_sensor("METER_TYP", "meter_type", entity_category=_DIAG, entity_registry_enabled_default=False),
-    _dev_sensor("A_P_METER", "meter_power_a", entity_category=_DIAG, entity_registry_enabled_default=False, **_WATT),
-    _dev_sensor("B_P_METER", "meter_power_b", entity_category=_DIAG, entity_registry_enabled_default=False, **_WATT),
-    _dev_sensor("C_P_METER", "meter_power_c", entity_category=_DIAG, entity_registry_enabled_default=False, **_WATT),
+    _dev_sensor("METER_TYP", "meter_type", **_METER_DIAG),
+    _dev_sensor("A_P_METER", "meter_power_a", **_METER_DIAG, **_WATT),
+    _dev_sensor("B_P_METER", "meter_power_b", **_METER_DIAG, **_WATT),
+    _dev_sensor("C_P_METER", "meter_power_c", **_METER_DIAG, **_WATT),
 )
 
 _METER = lambda d: bool(d["has_meter"])  # noqa: E731
@@ -305,6 +312,8 @@ async def async_setup_entry(
             return True
         if description.exists_fn is not None and not description.exists_fn(data):
             return False
+        if description.dev_field is not None:
+            return description.dev_field in data["dev"]
         return description.value_fn(data) is not None
 
     entities: list[TsunSensor] = [

@@ -438,3 +438,12 @@ def report_message(report: dict[str, str], email: str, repo: str = REPO) -> str:
         + report["summary"]
         + "\n```"
     )
+
+
+# Voltages and currents of the PV inputs and the output were disabled by default up to 0.3.6.
+# Since 0.3.7 they are enabled by default; this matches the unique ids whose old default is lifted once.
+_ENABLED_SINCE_037 = re.compile(r"_dev_(?:dc_v_pv[12]|dc_c_pv[12]|pv_out_v|pv_out_c)(?:_dev\d+)?$")
+
+
+def enabled_by_default_since_037(unique_id: str) -> bool:
+    return bool(_ENABLED_SINCE_037.search(unique_id))

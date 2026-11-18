@@ -36,6 +36,7 @@ PASSWORD = TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autoc
 
 class TsunSmartConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
+    MINOR_VERSION = 2
 
     @staticmethod
     @callback

@@ -8,13 +8,14 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.storage import Store
 
 from .api import TsunSmartApi
 from .const import CONF_PASSWORD_HASH, DOMAIN
 from .coordinator import TsunCoordinator, store_key
-from .model import expected_device_identifiers
+from .model import enabled_by_default_since_037, expected_device_identifiers
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON]
 
@@ -30,6 +31,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: TsunConfigEntry) -> bool
     entry.runtime_data = coordinator
     entry.async_on_unload(entry.add_update_listener(_async_reload))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    return True
+
+
+async def async_migrate_entry(hass: HomeAssistant, entry: TsunConfigEntry) -> bool:
+    if entry.version > 1:
+        return False
+    if entry.minor_version < 2:
+        # 0.3.7: PV and output voltages/currents are enabled by default now. Turn on the ones that were only off
+        # because of the old default; anything disabled by hand stays off.
+        registry = er.async_get(hass)
+        for entity in er.async_entries_for_config_entry(registry, entry.entry_id):
+            if entity.disabled_by is er.RegistryEntryDisabler.INTEGRATION and enabled_by_default_since_037(
+                entity.unique_id
+            ):
+                registry.async_update_entity(entity.entity_id, disabled_by=None)
+        hass.config_entries.async_update_entry(entry, minor_version=2)
     return True
 
 

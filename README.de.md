@@ -45,7 +45,7 @@ aus und stellt den Speicherzustand in Home Assistant bereit.
 | Geladen / Entladen heute | kWh |
 | PV / Geladen / Entladen gesamt | Lebenszeitzähler in kWh (werden nicht um Mitternacht zurückgesetzt, beste Wahl für das Energie-Dashboard) |
 | Akku-Details | Spannung, Strom, Min-/Max-Temperatur, Zustand (SOH), Zellspannungen (min/max), Restkapazität (Ah), Entladetiefe, Arbeitsmodus (z. B. *Konstantleistungsmodus*) |
-| PV-Eingänge und Ausgang | PV1-/PV2-Leistung und -Temperatur (Spannung und Strom sind standardmäßig deaktiviert; die PV-Temperaturen sind die der MPPT-Eingänge im Inneren der DCU, nicht die der Module), Ausgangsleistung und -status |
+| PV-Eingänge und Ausgang | PV1-/PV2-Leistung und -Temperatur, -Spannung und -Strom (die PV-Temperaturen sind die der MPPT-Eingänge im Inneren der DCU, nicht die der Module), Ausgangsleistung, -spannung, -strom und -status |
 | Signalstufe des Loggers | Diagnose, standardmäßig deaktiviert; die Skala ist unklar (die App zeigt auf der Logger-Seite eine andere Zahl) |
 | Hausanschluss *(nur wenn ein Smart Meter an die Cloud meldet; experimentell)* | Verbrauchsleistung, Netzleistung (**+ Bezug / − Einspeisung**), Netzstatus; standardmäßig deaktiviert: Zähler für Bezug / Einspeisung / Verbrauch gesamt, Zählertyp und Leistung je Phase |
 | Akku-Status | z. B. `discharge` |
@@ -53,7 +53,7 @@ aus und stellt den Speicherzustand in Home Assistant bereit.
 | Online (Binärsensor) | `aus`, solange der Logger offline ist |
 | Geräte-Bericht (Konfigurieren-Dialog oder Knopf) | zeigt einen vorausgefüllten GitHub-Issue-Link und einen Mail-Link, siehe [Mithilfe gesucht](#mithilfe-gesucht-weitere-geräte) |
 
-Die Akku- und PV-Details stammen vom selben Bildschirm, den die App unter *Geräte → Batterie → Echtzeit* zeigt; sie werden nur angelegt, wenn dein System sie liefert. Die Sensoren zum Hausanschluss wurden an einem System mit Smart Meter gesehen (ein EcoTracker-kompatibler Zähler an der DCU, dessen Werte der Besitzer verändert), behandle sie also als **experimentell**: Bei Bezug stimmt die Netzleistung mit dem Zähler überein, das Vorzeichen bei Einspeisung ist nicht geprüft, und die drei Zähler waren die Zählerstände des Smart Meters geteilt durch 1000 und mit vertauschtem Bezug/Einspeisung. Sie sind deshalb standardmäßig deaktiviert und für das Energie-Dashboard nicht geeignet. Es sind außerdem Momentwerte, die der Logger alle 5 Minuten hochlädt, keine durchgehenden Messungen.
+Die Akku- und PV-Details stammen vom selben Bildschirm, den die App unter *Geräte → Batterie → Echtzeit* zeigt; sie werden nur angelegt, wenn dein System sie liefert. Die Sensoren zum Hausanschluss wurden an einem System mit Smart Meter gesehen (ein EcoTracker-kompatibler Zähler an der DCU, dessen Werte der Besitzer verändert), behandle sie also als **experimentell**: Bei Bezug stimmt die Netzleistung mit dem Zähler überein, Einspeisung ist negativ (von einem zweiten Nutzer mit Shelly Pro 3EM bestätigt), und die drei Zähler waren die Zählerstände des Smart Meters geteilt durch 1000 und mit vertauschtem Bezug/Einspeisung. Sie sind deshalb standardmäßig deaktiviert und für das Energie-Dashboard nicht geeignet. Es sind außerdem Momentwerte, die der Logger alle 5 Minuten hochlädt, keine durchgehenden Messungen.
 
 Die Werte eines Updates können aus leicht unterschiedlichen Zeitpunkten stammen: Die Cloud liefert nicht für jeden Wert einen eigenen Zeitstempel, zusammengehörige Werte (z. B. verbleibende Energie und Restkapazität) passen deshalb kurz mal nicht zusammen.
 

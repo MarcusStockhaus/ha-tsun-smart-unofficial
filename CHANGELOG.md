@@ -1,5 +1,13 @@
 # Changelog / Änderungsprotokoll
 
+## 0.3.7 – 2026-11-18
+- EN: Voltage and current of the PV inputs and of the output are now enabled by default. Before, they were disabled and easy to miss when turning them on by hand. On existing installations they are turned on once by the update; sensors you disabled yourself stay off.
+- DE: Spannung und Strom der PV-Eingänge und des Ausgangs sind jetzt standardmäßig aktiviert. Bisher waren sie deaktiviert und beim Aktivieren von Hand leicht zu übersehen. Bei bestehenden Installationen schaltet das Update sie einmalig ein; Sensoren, die du selbst deaktiviert hast, bleiben aus.
+- EN: Detail sensors of the device screen are now created as soon as the cloud lists the field, even if its value happens to be empty when Home Assistant starts; they show as unknown until a value arrives. Before, such a sensor was missing until the next start. The smart meter fields still need a value.
+- DE: Detailsensoren vom Geräte-Bildschirm werden jetzt angelegt, sobald die Cloud das Feld nennt, auch wenn der Wert beim Start von Home Assistant gerade leer ist; bis ein Wert kommt, zeigen sie „unbekannt“. Bisher fehlte so ein Sensor bis zum nächsten Start. Die Felder des Smart Meters brauchen weiterhin einen Wert.
+- EN: Docs: the grid power is negative on feed-in, confirmed by a second user with a Shelly Pro 3EM.
+- DE: Doku: Die Netzleistung ist bei Einspeisung negativ, von einem zweiten Nutzer mit Shelly Pro 3EM bestätigt.
+
 ## 0.3.6 – 2026-11-14
 - EN: Further storage units also get their own battery power (from the device screen, positive = charging, sign from the unit's battery status) and PV power (total of the PV inputs). The main device is unchanged.
 - DE: Weitere Speicher bekommen außerdem eigene Akkuleistung (vom Geräte-Bildschirm, positiv = Laden, Vorzeichen aus dem Akkustatus des Speichers) und PV-Leistung (Summe der PV-Eingänge). Das Hauptgerät bleibt unverändert.
